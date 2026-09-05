@@ -4,8 +4,7 @@
 
 - Sanket Prajapati - Team Leader
 - Manav Joshi
-- Reyan Vaghela
-- Umang Vaza
+
 
 An HR & Payroll ERP platform built for Odoo Hackathon 2026 Final — Team 726.
 
