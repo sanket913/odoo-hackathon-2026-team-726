@@ -7,6 +7,7 @@ import '../styles/landing-paper.css'
 import '../styles/workflow-journey.css'
 import { HeroWorkspace } from '../components/HeroWorkspace'
 import { ScrollEnvelope } from '../components/ScrollEnvelope'
+import { ProductGlimpses } from '../components/ProductGlimpses'
 
 const navigation = [['Product', 'product'], ['HR Management', 'hr'], ['Attendance', 'attendance'], ['Payroll', 'payroll'], ['Why PeoplePay360', 'why']]
 const modules = [
@@ -155,6 +156,8 @@ export default function PublicLandingPage() {
         </li>)}</ol>
         <div className="pp-journey-meter" aria-hidden="true"><span /></div></div>
       </section>
+
+      <ProductGlimpses />
 
       <ScrollEnvelope>
       <section className="pp-paper-cta pp-container" aria-labelledby="paper-cta-title">

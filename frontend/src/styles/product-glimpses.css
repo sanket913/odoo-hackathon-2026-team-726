@@ -1,0 +1,79 @@
+.pp-glimpses { position: relative; overflow: clip; padding: 100px 0 45px; background: linear-gradient(180deg, #fcfaff, #f4eff8 30%, #f6f8f6 65%, #fcfaff); }
+.pp-glimpses-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 75px; }
+.pp-glimpses-heading .pp-eyebrow { text-align: left; }
+.pp-public .pp-glimpses-heading h2 { margin: 16px 0 22px; font-size: clamp(36px, 4.2vw, 58px); line-height: 1.12; letter-spacing: -.045em; }
+.pp-glimpses-heading h2 em { color: #805590; font-style: normal; }
+.pp-glimpses-heading p:last-child { max-width: 520px; color: #7c7087; font-size: 18px; }
+.pp-glimpses :is(button, a, video):focus-visible { outline: 3px solid #28958b; outline-offset: 5px; }
+.pp-glimpse { --glimpse-reveal: 1; --glimpse-color: #825694; --glimpse-tint: #eee2f5; --glimpse-direction: 1; position: relative; display: grid; grid-template-columns: .72fr 1.28fr; align-items: center; gap: 56px; min-height: 510px; padding: 40px 0 85px; }
+.pp-glimpse-teal { --glimpse-color: #238b83; --glimpse-tint: #d9efea; }
+.pp-glimpse-gold { --glimpse-color: #aa7c2e; --glimpse-tint: #f1e6d0; }
+.pp-glimpse-reverse { --glimpse-direction: -1; grid-template-columns: 1.28fr .72fr; }
+.pp-glimpse-reverse .pp-glimpse-copy { grid-column: 2; grid-row: 1; }
+.pp-glimpse-reverse .pp-glimpse-visual { grid-column: 1; grid-row: 1; }
+.pp-glimpse-copy { min-width: 0; position: relative; }
+.pp-glimpse-chapter { display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 600; color: var(--glimpse-color); }
+.pp-glimpse-number { display: grid; place-items: center; flex: 0 0 46px; height: 46px; border: 1px solid #fff; border-radius: 15px; background: linear-gradient(145deg, #fff, var(--glimpse-tint)); box-shadow: 0 4px 0 color-mix(in srgb, var(--glimpse-color) 16%, #fff), 0 10px 22px -12px var(--glimpse-color); font-size: 15px; transform: rotate(-6deg); }
+.pp-glimpse-chapter-label { display: flex; align-items: center; gap: 9px; }
+.pp-public .pp-glimpse-copy h3 { font-size: clamp(30px, 2.8vw, 42px); line-height: 1.18; letter-spacing: -.045em; font-weight: 650; margin: 28px 0 26px; color: #302737; text-wrap: balance; }
+.pp-glimpse-copy h3 em { position: relative; display: inline-block; padding-bottom: 9px; font-family: 'Segoe Print', 'Bradley Hand', cursive; font-size: 1.05em; font-weight: 600; font-style: normal; letter-spacing: -.065em; line-height: 1.3; color: var(--glimpse-color); }
+.pp-glimpse-scribble { position: absolute; left: 0; bottom: 0; width: 100%; height: 12px; overflow: visible; fill: none; stroke: #dfb761; stroke-width: 3; stroke-linecap: round; }
+.pp-glimpse-copy > p { font-size: 17px; line-height: 1.8; color: #706477; max-width: 390px; margin: 0; }
+.pp-glimpse-copy ul { display: flex; flex-wrap: wrap; gap: 9px; margin: 24px 0 28px; list-style: none; padding: 0; }
+.pp-glimpse-copy li { display: flex; gap: 8px; align-items: center; padding: 9px 12px; border: 1px solid color-mix(in srgb, var(--glimpse-color) 16%, #fff); border-radius: 11px; background: #ffffffb8; box-shadow: 0 3px 0 #ffffff80; font-size: 14px; line-height: 1.4; color: #584b62; }
+.pp-glimpse-copy li svg { flex-shrink: 0; color: var(--glimpse-color); }
+.pp-glimpse-link { display: inline-flex; gap: 22px; align-items: center; font-size: 16px; font-weight: 600; color: #493452; text-decoration: none; }
+.pp-glimpse-link > span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--glimpse-color); color: #fff; box-shadow: 0 4px 0 color-mix(in srgb, var(--glimpse-color) 30%, #fff), 0 9px 18px -10px var(--glimpse-color); transition: transform .2s ease, box-shadow .2s ease; }
+.pp-glimpse-link:hover > span { transform: translate(2px, -3px); box-shadow: 0 7px 0 color-mix(in srgb, var(--glimpse-color) 24%, #fff), 0 12px 20px -10px var(--glimpse-color); }
+.pp-glimpse-visual { position: relative; margin: 0; perspective: 1400px; min-width: 0; }
+.pp-glimpse-orbit { position: absolute; z-index: 0; inset: -50px -30px; border-radius: 50%; background: radial-gradient(ellipse, var(--glimpse-tint), transparent 69%); pointer-events: none; }
+.pp-glimpse-window { position: relative; z-index: 1; border-radius: 16px; padding: 7px; background: linear-gradient(135deg, #fff, #e4d9ec); border: 1px solid #dcd0e5; box-shadow: 0 7px 0 #ddd1e6, 0 30px 55px -22px #43225260, inset 0 1px 0 #fff; transform-origin: center; }
+.pp-glimpse-chrome { display: flex; align-items: center; gap: 14px; height: 35px; padding: 0 8px 6px; font-size: 10px; color: #8a7a95; }
+.pp-glimpse-dots { display: flex; gap: 4px; }
+.pp-glimpse-dots i { width: 6px; height: 6px; border-radius: 100%; background: #c7b4d1; }
+.pp-glimpse-dots i:nth-child(2) { background: #c9dcd5; }
+.pp-glimpse-dots i:nth-child(3) { background: #e5d4b9; }
+.pp-glimpse-chrome-divider { padding: 0 5px; opacity: .5; }
+.pp-glimpse-demo { margin-left: auto; white-space: nowrap; font-size: 9px; color: #a291ad; }
+.pp-glimpse-window video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 9px; background: #faf8fc; }
+.pp-glimpse-visual figcaption { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; margin: -4px 25px 0 auto; width: max-content; max-width: calc(100% - 20px); padding: 14px 18px; border-radius: 15px; background: #fff; border: 1px solid #e3dae9; box-shadow: 0 5px 0 #e9e1ee, 0 14px 30px -10px #49305825; }
+.pp-glimpse-caption-icon { display: grid; place-items: center; width: 37px; height: 37px; background: var(--glimpse-tint); color: var(--glimpse-color); border-radius: 11px; }
+.pp-glimpse-visual figcaption small { display: block; font-size: 8px; letter-spacing: 1.3px; color: #a08ba9; margin-bottom: 2px; }
+.pp-glimpse-visual figcaption strong { display: block; font-size: 12px; font-weight: 600; color: #685274; }
+.pp-glimpse-caption-check { color: #36968a; margin-left: 12px; }
+.pp-glimpse-reverse figcaption { margin-inline: 25px auto; }
+.has-glimpse-motion .pp-glimpse-window { transform: translate3d(calc((1 - var(--glimpse-reveal)) * 95px * var(--glimpse-direction)), calc((1 - var(--glimpse-reveal)) * 55px), 0) rotateY(calc((1 - var(--glimpse-reveal)) * -10deg * var(--glimpse-direction))) rotateX(calc((1 - var(--glimpse-reveal)) * 5deg)); opacity: calc(.2 + var(--glimpse-reveal) * .8); }
+.has-glimpse-motion .pp-glimpse-copy { transform: translateY(calc((1 - var(--glimpse-reveal)) * 35px)); opacity: calc(.3 + var(--glimpse-reveal) * .7); }
+.has-glimpse-motion .pp-glimpse-visual figcaption { transform: translateY(calc((1 - var(--glimpse-reveal)) * 35px)); opacity: var(--glimpse-reveal); }
+.pp-glimpses-ending { display: flex; align-items: center; justify-content: center; gap: 24px; margin: 5px 0 35px; text-align: center; }
+.pp-glimpses-ending p { color: #8e7c9b; font-size: 15px; }
+.pp-glimpses-ending strong { font-weight: 500; color: #765487; }
+.pp-glimpses-ending-line { height: 1px; flex: 1; max-width: 180px; background: linear-gradient(90deg, transparent, #d9c9e4, transparent); }
+@media (min-width: 761px) and (max-width: 1050px) {
+  .pp-glimpse { gap: 28px; grid-template-columns: .85fr 1.15fr; }
+  .pp-glimpse-reverse { grid-template-columns: 1.15fr .85fr; }
+  .pp-glimpse-chrome > span:nth-child(2) { font-size: 9px; }
+  .pp-glimpse-demo { display: none; }
+}
+@media (max-width: 760px) {
+  .pp-glimpses { padding: 65px 0 20px; }
+  .pp-glimpses-heading { display: block; margin-bottom: 38px; }
+  .pp-glimpses-heading p:last-child { font-size: 16px; }
+  .pp-glimpse, .pp-glimpse-reverse { display: flex; flex-direction: column; align-items: stretch; gap: 30px; padding: 28px 0 50px; min-height: 0; }
+  .pp-glimpse-copy > p { max-width: 520px; }
+  .pp-glimpse-copy ul { gap: 8px; margin-block: 18px; }
+  .pp-glimpse-copy li { font-size: 14px; }
+  .pp-glimpse-visual { margin-bottom: 15px; }
+  .pp-glimpse-orbit { inset: -25px -15px; }
+  .pp-glimpse-chrome { gap: 9px; font-size: 9px; }
+  .pp-glimpse-demo { display: none; }
+  .pp-glimpse-visual figcaption { margin: -2px auto 0; padding: 10px 12px; gap: 9px; }
+  .pp-glimpse-visual figcaption strong { font-size: 11px; }
+  .pp-glimpse-caption-check { margin-left: 2px; }
+  .pp-glimpses-ending { gap: 10px; }
+  .pp-glimpses-ending p { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-glimpses .pp-glimpse :is(.pp-glimpse-window, .pp-glimpse-copy, figcaption) { transform: none; opacity: 1; }
+  .pp-glimpse-link > span { transition: none; }
+}
