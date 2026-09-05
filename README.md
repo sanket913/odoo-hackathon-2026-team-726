@@ -1,341 +1,335 @@
-# PeoplePay360
+﻿# PeoplePay360
 
-## Team 726
+### Your people. Your payroll. One connected platform.
 
-- Sanket Prajapati - Team Leader
-- Manav Joshi
+**Odoo Hackathon 2026 | Team 726 | Final submission**
 
+PeoplePay360 connects employee records, contracts, attendance, leave and payroll in one role-aware workspace. HR teams manage the employee lifecycle, payroll teams review and finalize salary runs, and employees access their own records and paid payslips. The application uses a React frontend, a FastAPI backend and persistent MySQL data.
 
-An HR & Payroll ERP platform built for Odoo Hackathon 2026 Final — Team 726.
+| Team member | GitHub |
+| --- | --- |
+| Sanket Prajapati - Team Leader | [sanket913](https://github.com/sanket913) |
+| Manav Joshi | [Manavjoshi2579](https://github.com/Manavjoshi2579) |
 
-PeoplePay360 covers the full employee lifecycle from onboarding through payroll: employee
-records, contracts, working schedules, attendance, time-off management, salary structures
-and rules, payroll runs with a strict approval state machine, payslip PDFs, and a live
-payroll dashboard — all backed by a real MySQL database with normalized role-based access
-control.
+[Features](#features) · [Architecture](#architecture) · [Quick start](#quick-start) · [Demo accounts](#demo-accounts) · [Evaluation walkthrough](#evaluation-walkthrough) · [Verification](#verification) · [Scope and limitations](#scope-and-limitations)
 
-## Tech stack
+## Features
 
-**Frontend:** React 18, Vite, Tailwind CSS, React Router, TanStack Query, Axios, React Hook
-Form + Zod, Recharts, Lucide icons, date-fns, Sonner. JavaScript only — no TypeScript.
+| Module | Implemented functionality |
+| --- | --- |
+| Authentication and access | Admin-created accounts, employee linking, multiple roles, JWT authentication, refresh sessions and server-side permissions |
+| Employees | List and card views, search, filters, pagination, employee details and related records |
+| Contracts | Automatic references, contract history, overlap checks and payroll-period contract resolution |
+| Working schedules | Weekly intervals, optional breaks, derived hours, overlap validation and employee/contract assignment |
+| Attendance | Check-in/out widget, elapsed timer, attendance status, employee history, location checks and audited corrections |
+| Time off | Configurable types, allocations, two-way date/day calculation, requests, approval/refusal and balance validation |
+| Salary configuration | Ordered salary rules with Fixed, Percentage and safe arithmetic Formula calculations |
+| Payroll | Two-step employee selection, payroll diagnostics and Draft → Computed → Validated → Paid processing |
+| Payslips | Salary breakdown, paid-only PDF download, QR verification and ownership checks |
+| Dashboard | Database-driven salary totals, department costs, trends, payslip statuses, attendance, leave and warnings |
+| Notifications and audit | Persistent notifications, read/read-all actions and sensitive-action audit history |
+| User experience | Responsive workspace, consistent navigation, pagination, animated landing page and success-only sign-in animation |
 
-**Backend:** Python 3.11, FastAPI, Pydantic v2, SQLAlchemy 2.x, Alembic, PyMySQL,
-python-jose (JWT), Argon2 password hashing, Uvicorn. All monetary values use
-`Decimal`/`Numeric` — never `float`.
+The final [Excalidraw requirements audit](EXCALIDRAW_REQUIREMENTS_AUDIT.md) maps the reference flows to implementation, verification and explicit policy choices.
 
-**Database:** MySQL 8.
-
-No Docker is used anywhere in this project. Everything runs with a plain local Python
-virtual environment, `npm`, and a locally installed MySQL server — see Setup below for the
-exact commands.
-
-## Architecture at a glance
+## Architecture
 
 ```mermaid
 flowchart LR
-    subgraph Client["Browser"]
-        UI["React 18 SPA"]
+    subgraph Browser["Browser application"]
+        UI["React + React Router"]
+        Query["TanStack Query + Axios"]
+        UI --> Query
     end
-    subgraph Server["FastAPI Backend"]
-        RT["Routers"] --> SV["Services"]
-        SV --> RP["Repositories"]
-        SV --> EN["Domain Engines\n(formula / payroll / validation)"]
-        RP --> MD["SQLAlchemy Models"]
-        EN --> MD
+    subgraph API["FastAPI backend"]
+        Auth["Authentication and permissions"]
+        Routes["API routers"]
+        Services["Business services"]
+        Engines["Payroll, formula and validation engines"]
+        Models["SQLAlchemy models and contract repository"]
+        Auth --> Routes --> Services
+        Services --> Engines
+        Services --> Models
+        Engines --> Models
     end
-    DB[("MySQL 8")]
-    UI -- "JWT bearer + refresh cookie" --> RT
-    MD --> DB
+    Query -->|"HTTP requests and session credentials"| Auth
+    Models --> DB[("MySQL 8")]
+    Services --> PDF["ReportLab PDF + QR"]
+    Services -.-> SMTP["Optional SMTP adapter"]
 ```
 
-Full write-up, request/response envelope, auth flow, and directory map:
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 18, Vite, Tailwind CSS, React Router, TanStack Query, Axios |
+| Forms and charts | React Hook Form, Zod, Recharts, Lucide icons |
+| Backend | Python, FastAPI, Pydantic, SQLAlchemy, Alembic, Uvicorn |
+| Persistence | MySQL 8 through PyMySQL; Decimal/Numeric salary calculations |
+| Authentication | JWT, Argon2 password hashing, persisted refresh sessions |
+| Documents | ReportLab and QR code generation |
+| Testing | Pytest, Vitest, Testing Library; Playwright browser checks |
 
-## Entity-relationship diagram
+### From employee to paid payslip
 
 ```mermaid
-erDiagram
-    EMPLOYEES ||--o{ CONTRACTS : has
-    EMPLOYEES ||--o{ ATTENDANCES : logs
-    EMPLOYEES ||--o{ TIME_OFF_REQUESTS : submits
-    EMPLOYEES ||--o{ TIME_OFF_ALLOCATIONS : receives
-    TIME_OFF_ALLOCATIONS ||--o{ TIME_OFF_REQUESTS : consumes
-    SALARY_STRUCTURES ||--o{ SALARY_RULES : contains
-    SALARY_STRUCTURES ||--o{ CONTRACTS : "used by"
-    SALARY_STRUCTURES ||--o{ PAYRUNS : "computed with"
-    PAYRUNS ||--o{ PAYSLIPS : contains
-    EMPLOYEES ||--o{ PAYSLIPS : "belongs to"
-    PAYSLIPS ||--o{ PAYSLIP_LINES : "line items"
-    USERS ||--o{ USER_ROLES : has
-    ROLES ||--o{ USER_ROLES : has
-    ROLES ||--o{ ROLE_PERMISSIONS : has
-    PERMISSIONS ||--o{ ROLE_PERMISSIONS : has
-    USERS ||--o| EMPLOYEES : "linked account"
+flowchart TD
+    Employee["Employee record"] --> Contract["Applicable contract for payroll period"]
+    Schedule["Working schedule"] --> Contract
+    Schedule --> Attendance["Attendance and worked hours"]
+    Leave["Approved time off"] --> Inputs["Formula inputs"]
+    Attendance --> Inputs
+    Structure["Salary structure and sequenced rules"] --> Scope["Choose payroll scope and period"]
+    Scope --> Selection["Continue: review eligible employees"]
+    Selection --> Create["Select employees and click Create Payrun"]
+    Create --> Draft["Draft payrun and linked payslips"]
+    Contract --> Compute["Compute salary lines"]
+    Inputs --> Compute
+    Draft --> Compute
+    Compute --> Review["Review warnings and validate"]
+    Review --> Paid["Mark Paid"]
+    Paid --> PDF["Download paid payslip PDF"]
+    Paid --> Dashboard["Historical records and live dashboard"]
 ```
 
-Full ERD with every field and constraint note: [`docs/ERD.md`](docs/ERD.md).
+**Continue does not create a payrun.** Creation happens after employee selection. Attendance, schedule and unpaid-leave values affect salary when configured rules reference them.
 
-## Payroll state machine
+### Payroll lifecycle
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Draft: create_payrun()\n(step 2 of wizard ONLY)
-    Draft --> Computed: compute_payrun()
-    Computed --> Computed: recompute
-    Computed --> Validated: validate_payrun()\n(blocked while any blocking warning exists)
-    Validated --> Paid: mark_paid()
+    [*] --> Draft: Create with selected employees
+    Draft --> Computed: Compute
+    Computed --> Computed: Recompute
+    Computed --> Validated: Validate after blocking issues are resolved
+    Validated --> Paid: Mark Paid
     Paid --> [*]
 ```
 
-Every transition is checked against `PAYRUN_TRANSITIONS` server-side, regardless of what the
-UI shows — an out-of-order transition attempted via a direct API call is rejected the same
-way it would be from the browser. Details: [`docs/BUSINESS_RULES.md`](docs/BUSINESS_RULES.md).
+Transitions are enforced by the backend. Paid records remain available as history and cannot be recomputed. Fixed rules use their entered value, including zero; a Formula rule containing `WAGE` uses the applicable contract wage.
 
-## Leave approval workflow
+Formula context includes `WAGE`, `WORKED_DAYS`, `WORKED_HOURS`, `PERIOD_DAYS`, `SCHEDULED_DAYS`, `SCHEDULED_HOURS`, `OVERTIME_HOURS` and `UNPAID_DAYS`, alongside prior rule results. Expressions pass through an arithmetic AST allow-list.
 
-```mermaid
-sequenceDiagram
-    participant E as Employee
-    participant API as FastAPI
-    participant DB as MySQL
-    participant HR as HR Manager
-
-    E->>API: POST /time-off/requests (Pending)
-    API->>DB: INSERT request + notification
-    HR->>API: POST /time-off/requests/{id}/approve
-    API->>DB: SELECT request FOR UPDATE, recheck Pending
-    API->>DB: SELECT allocation FOR UPDATE, check remaining balance
-    API->>DB: UPDATE allocation.taken, request.status=Approved
-    API->>DB: INSERT audit_log, INSERT notification
-    API-->>HR: 200 OK (all-or-nothing transaction)
-```
-
-A second approval attempt on the same request is rejected — the row lock plus post-lock
-status recheck prevents double-approval and double-consumption of the allocation. Details:
-[`docs/BUSINESS_RULES.md`](docs/BUSINESS_RULES.md).
-
-## Employee → payslip flow
+### Leave approval and balance handling
 
 ```mermaid
-flowchart LR
-    A[Employee + Contract] --> B[Working Schedule]
-    A --> C[Attendance records]
-    A --> D[Time Off allocations/requests]
-    E[Salary Structure + Rules] --> F["Payrun Wizard\n(Step 1: eligibility, Step 2: create)"]
-    A --> F
-    F --> G[Payrun: Draft]
-    G -->|compute| H[Payslips: Computed]
-    C --> H
-    D --> H
-    H -->|validate| I[Payrun: Validated]
-    I -->|mark paid| J[Payrun: Paid]
-    J --> K[Payslip PDF]
-    J --> L[Payroll Dashboard]
+flowchart TD
+    Request["Submit request"] --> Validate["Validate type, dates and allocation policy"]
+    Validate --> Approval{"Approval required?"}
+    Approval -->|"Yes"| Pending["To Approve"]
+    Pending --> Decision{"HR decision"}
+    Decision -->|"Refuse"| Refused["Refused"]
+    Decision -->|"Approve"| Transaction["Approval transaction: lock and recheck request"]
+    Approval -->|"No"| Transaction
+    Transaction --> Allocation{"Allocation required?"}
+    Allocation -->|"Yes"| Balance["Lock allocation and check balance"]
+    Balance -->|"Allowed"| Consume["Consume allocation once"]
+    Balance -->|"Insufficient balance"| Reject["Reject approval without partial updates"]
+    Consume --> Approved["Approved with audit and notification"]
+    Allocation -->|"No"| Approved
 ```
 
-## RBAC model
+Duplicate approval is rejected. Allocation-required paid leave cannot overdraw its balance. Requests use inclusive calendar days.
 
-Normalized RBAC (`users` / `roles` / `permissions` / `user_roles` / `role_permissions` +
-`refresh_sessions` for server-side JWT refresh revocation) with 5 official roles and 39
-distinct permission codes. Full matrix and demo credentials:
-[`docs/RBAC.md`](docs/RBAC.md).
+### Core data relationships
 
-## Setup
+This diagram summarizes the main domain relationships; it is not the complete database schema.
 
-### 1. MySQL
+```mermaid
+erDiagram
+    USERS }o--o{ ROLES : assigned
+    ROLES }o--o{ PERMISSIONS : grant
+    USERS |o--o| EMPLOYEES : linked
+    EMPLOYEES ||--o{ CONTRACTS : has
+    WORKING_SCHEDULES |o--o{ EMPLOYEES : assigned
+    WORKING_SCHEDULES |o--o{ CONTRACTS : assigned
+    EMPLOYEES ||--o{ ATTENDANCES : records
+    EMPLOYEES ||--o{ TIME_OFF_ALLOCATIONS : receives
+    EMPLOYEES ||--o{ TIME_OFF_REQUESTS : submits
+    TIME_OFF_TYPES ||--o{ TIME_OFF_REQUESTS : defines
+    TIME_OFF_ALLOCATIONS |o--o{ TIME_OFF_REQUESTS : funds
+    SALARY_STRUCTURES ||--o{ SALARY_RULES : contains
+    SALARY_STRUCTURES ||--o{ PAYRUNS : configures
+    PAYRUNS ||--o{ PAYSLIPS : contains
+    EMPLOYEES ||--o{ PAYSLIPS : receives
+    PAYSLIPS ||--o{ PAYSLIP_LINES : itemizes
+```
+
+Roles and permissions use association tables. Current permissions are read server-side, so revoked roles do not retain access through stale token claims. Users cannot change their own roles.
+
+## Quick start
+
+### Prerequisites
+
+- Python 3.11 or a compatible newer Python installation
+- Node.js 20 LTS and npm
+- MySQL 8 running locally
+- Git
+
+The commands below use **Windows PowerShell**. No Docker setup is required.
+
+### 1. Clone the repository
+
+```powershell
+git clone https://github.com/sanket913/odoo-hackathon-2026-team-726.git
+cd odoo-hackathon-2026-team-726
+```
+
+### 2. Create the database
+
+Run this in a MySQL administrator session. Replace the example password and use the same value in the backend configuration.
 
 ```sql
 CREATE DATABASE peoplepay360 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'pp360'@'localhost' IDENTIFIED BY 'change_me';
+CREATE USER 'pp360'@'localhost' IDENTIFIED BY 'replace_with_local_password';
 GRANT ALL PRIVILEGES ON peoplepay360.* TO 'pp360'@'localhost';
-FLUSH PRIVILEGES;
 ```
 
-### 2. Backend
+### 3. Configure and start the backend
 
-```bash
+```powershell
 cd backend
-python3.11 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# edit .env: DB_USER/DB_PASSWORD/DB_NAME to match step 1, and set a real JWT_SECRET_KEY
-#   python -c "import secrets; print(secrets.token_hex(32))"
-alembic upgrade head
-python -m app.seed
-uvicorn app.main:app --reload --port 8000
+py -3.11 -m venv venv
+.\venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
+.\venv\Scripts\python.exe -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-The API is live at `http://localhost:8000/api/v1` (docs at `http://localhost:8000/docs`).
-
-### 3. Frontend
-
-```bash
-cd frontend
-npm install
-cp .env.example .env
-npm run dev
-```
-
-Open `http://localhost:5173`.
-
-Full backend-only and frontend-only instructions:
-[`backend/README_BACKEND.md`](backend/README_BACKEND.md),
-[`frontend/README_FRONTEND.md`](frontend/README_FRONTEND.md).
-
-## Demo credentials
-
-| Role | Email | Password |
-|---|---|---|
-| Admin | `admin@peoplepay360.com` | `Admin@123` |
-| HR Manager | `hr.manager@peoplepay360.com` | `Hr@12345` |
-| HR & Payroll User | `payroll.user@peoplepay360.com` | `Payroll@123` |
-| HR & Payroll Manager | `payroll.manager@peoplepay360.com` | `Payroll@123` |
-| Employee | `employee@peoplepay360.com` | `Employee@123` |
-
-## Test results
-
-```
-Backend:  42 passed  (pytest -q)
-Frontend: 18 passed  (npm run test)
-```
-
-Both suites are re-run and green at the time of packaging. See
-[`docs/ACCEPTANCE_TEST.md`](docs/ACCEPTANCE_TEST.md) for what each suite covers and for the
-two official end-to-end acceptance flows (Employee → Payslip, Leave request → approval),
-both of which were manually verified against a live MySQL database including data
-persistence across a full page reload. A suggested judge walkthrough is in
-[`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).
-
-## Implemented requirements (PDF spec)
-
-- Normalized RBAC schema (users/roles/permissions/user_roles/role_permissions) with 5
-  official roles and server-side-enforced permissions, not a single role enum.
-- JWT access tokens + HttpOnly-cookie refresh tokens, server-side refresh-session hashing
-  and revocation.
-- Employees, Contracts (with blocking overlap/conflict detection and period resolution),
-  Working Schedules (with server-computed weekly hours), Attendance (present / late / absent
-  / overtime / missing-checkout / manually-corrected), Time Off (Types, Allocations,
-  Requests) with an atomic, row-locked approval transaction preventing double-approval and
-  double-consumption of balances.
-- Salary Structures and Salary Rules (Fixed / Percentage / Formula computation types) backed
-  by an AST-based safe formula evaluator with no `eval`/`exec` anywhere in the codebase.
-- Payroll: a two-step Payrun wizard where step 1 ("Continue") never creates a Payrun, an
-  explicit Draft → Computed → Validated → Paid state machine enforced server-side against
-  direct API calls (not just hidden UI), and duplicate-payslip prevention both in the
-  service layer and via a database unique constraint.
-- Decimal-only monetary arithmetic throughout (`Numeric(15,2)` columns, Python `Decimal`
-  with explicit rounding) — never `float` for money.
-- Payslip PDF generation (ReportLab) with an optional embedded QR code.
-- An email adapter that reports `EMAIL_NOT_CONFIGURED` honestly when SMTP isn't set up,
-  rather than claiming delivery.
-- A Payroll Dashboard computing every KPI/chart/section live from MySQL: Total Net Salary
-  Paid, Payslips Generated, Average Salary, Approved Time Off, Attendance Health, Salary
-  Cost by Department (bar chart), Monthly Net Salary Trend (line chart), Payroll Alerts
-  (non-blocking warnings), Attendance Overview, Time Off Overview, Department Breakdown.
-- Audit logging of sensitive actions (contract changes, allocation/request approvals,
-  payrun transitions, role changes) with JSON-safe before/after snapshots.
-- Database-backed notifications (polling-based; see Known Limitations).
-- Full CRUD screens for every entity above plus an Admin Users/Roles screen and a Reports
-  landing page.
-- Backend test suite (42 tests) and frontend smoke/unit tests (18 tests), both passing.
-- Responsive layout tested at 1440 / 1024 / 768 / 390 widths.
-- Enterprise seed data: 8 representative demo users, 250 employees across multiple departments/
-  positions/employee types, 2+ schedules, active + historical + draft contracts, 3+
-  time-off types with allocations/requests across Pending/Approved/Refused, attendance
-  covering every listed status, 2 salary structures, and Payruns existing in **all four
-  states simultaneously** (Draft, Computed, Validated, Paid).
-
-## Implemented Excalidraw screens
-
-Employee list/detail with smart-button tabs (Contracts/Attendance/Time Off/Allocations),
-Contracts list/detail/form, Working Schedules list/detail/form, Attendance list/detail/form
-with manual check-in/out, Time Off Types/Allocations/Requests (list/detail/form for each,
-with Approve/Refuse actions gated by permission and status), Salary Structures/Rules
-(list/detail/form), Payruns list, the two-step New Payrun wizard, Payrun detail with a
-status-gated action toolbar and warnings banner, Payslip list/detail with PDF download, the
-Payroll Dashboard, an Admin Users/Roles screen, and a Reports landing page.
-
-## Differentiators actually implemented
-
-- **Safe, sandboxed salary-formula evaluator** using Python's `ast` module with an explicit
-  allow-list (no `eval`/`exec`, no attribute/subscript/function-call access) — this went
-  beyond a minimal Fixed/Percentage-only implementation.
-- **Server-side transition legality table** (`PAYRUN_TRANSITIONS`) enforced independently of
-  the UI, verified by tests that call the API directly with illegal transitions.
-- **Row-level locking (`SELECT ... FOR UPDATE`)** on both the time-off request and the
-  allocation during approval, specifically to close the double-approval/double-consumption
-  race condition rather than relying on optimistic checks alone.
-- **Honest email-adapter status reporting** (`EMAIL_NOT_CONFIGURED` vs. `sent`) instead of a
-  fire-and-forget send that silently no-ops.
-- **QR-coded payslip PDFs** (best-effort, wrapped so a QR-generation failure never blocks PDF
-  delivery).
-
-The premium differentiators described in the original brief as stretch goals — a
-"PayrollGuard" integrity engine, a "PayExplain" salary-change explainer, and a Payroll
-Digital Twin simulator — were **not implemented**. Priority was deliberately given to
-finishing and verifying every P0 requirement and both official acceptance flows against a
-real MySQL database first, per the brief's own stated priority order
-(correctness → compliance → real persistence → business logic → security → UX →
-differentiation); with that fully done, time did not remain to build these three P1/P2
-items, and they are disclosed here rather than claimed.
-
-## Known limitations (disclosed honestly)
-
-- The repository layer (`app/repositories/`) is fully built out for contract period
-  resolution and overlap detection specifically, since that logic is reused and
-  correctness-critical; other entities' queries live directly in their service modules
-  rather than a repository wrapper, since they are simple CRUD with no reuse need.
-- Payslip PDFs are generated with ReportLab rather than WeasyPrint (WeasyPrint's system
-  dependencies were not reliably available in the target environment); output is a
-  standard, correctly laid out PDF with the same required content.
-- Notifications are database-backed and delivered via polling from the frontend; there is no
-  WebSocket/push channel.
-- No Docker packaging is provided, by design — the brief explicitly required a manual local
-  setup, documented above.
-
-## Repository layout
-
-```
-backend/    FastAPI application, Alembic migrations, seed script, pytest suite
-frontend/   React + Vite SPA, Vitest suite
-docs/       Architecture, ERD, business rules, RBAC, acceptance tests, demo script
-```
-
-
-## Enterprise Demo Dataset
-
-The development seed creates 250 employee records and thousands of related HR/payroll records in MySQL. It demonstrates server-side pagination, search, filtering, real payroll computation and historical dashboard aggregation without frontend mock data or a UI rebuild.
-
-From `backend` with the existing virtual environment:
+Edit `backend/.env`: set `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and use the generated value for `JWT_SECRET_KEY`. Keep `ENV=development` for the demo seed and `CORS_ORIGINS=http://localhost:5173` for local development.
 
 ```powershell
 .\venv\Scripts\python.exe -m alembic upgrade head
 .\venv\Scripts\python.exe -m app.seed
+.\venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 ```
 
-An empty database can be seeded directly. A completed enterprise seed is validated on repeat runs without adding rows. Existing non-enterprise data is never cleared by the default command. To explicitly replace development domain data:
+Apply all migrations, including `829basicwage`, before using the final version. That migration makes legacy contract-wage Basic rules explicit without rewriting historical payslips.
+
+### 4. Start the frontend
+
+Open another terminal at the repository root:
 
 ```powershell
-.\venv\Scripts\python.exe -m app.seed --reset
+cd frontend
+npm ci
+Copy-Item .env.example .env
+npm run dev
+```
+
+The frontend example sets `VITE_API_BASE_URL=/api/v1`. Vite forwards `/api` requests to the backend at `127.0.0.1:8000` during development.
+
+| Service | Local address |
+| --- | --- |
+| Website | http://localhost:5173 |
+| API | http://localhost:8000/api/v1 |
+| Interactive API documentation | http://localhost:8000/docs |
+
+On macOS/Linux, create the environment with `python3.11 -m venv venv`, use `venv/bin/python` in place of the Windows executable path, and use `cp` to copy environment examples. Keep real `.env` files and credentials out of version control.
+
+For location-based attendance demonstrations, configure `BUSINESS_TIMEZONE`, `OFFICE_LAT`, `OFFICE_LON` and `OFFICE_RADIUS_KM` for the intended office and allow browser location access. SMTP delivery is optional and requires the SMTP settings in `.env.example`.
+
+## Demo accounts
+
+These credentials are for the seeded local development dataset.
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@peoplepay360.com` | `Admin@123` |
+| HR Manager | `hr.manager@peoplepay360.com` | `Hr@12345` |
+| HR Payroll User | `payroll.user@peoplepay360.com` | `Payroll@123` |
+| HR Payroll Manager | `payroll.manager@peoplepay360.com` | `Payroll@123` |
+| Employee | `employee@peoplepay360.com` | `Employee@123` |
+
+Accounts are created by administrators; public self-registration is not part of the application. Employee access is scoped to permitted personal records. See the [RBAC documentation](docs/RBAC.md) for the role model.
+
+### Demo dataset
+
+The deterministic development seed includes **250 employees**, **8 departments**, **5 schedules**, active and historical contracts, attendance and leave history, salary rules, and payruns across all four lifecycle states. Its fixed reference date is **5 September 2026**.
+
+For dashboard evaluation, choose **1 April to 30 September 2026**. April through July contain Paid runs, August contains Validated runs, September contains Computed runs, and a small October run remains Draft. A current-date-only filter may therefore show a different subset.
+
+From `backend`, verify the dataset with:
+
+```powershell
 .\venv\Scripts\python.exe -m app.seed --verify
 ```
 
-`--reset` first writes a typed, compressed JSON snapshot to `backend/.seed-backups/`, then replaces domain rows in one transaction. Existing users, password hashes and RBAC records are preserved. The snapshot contains private account data and is excluded from version control. This is an explicit development reset, not a production migration. Failures before commit roll back the domain replacement. The seed requires MySQL and `ENV=development`, uses the installed Alembic schema, and never runs during Uvicorn startup.
+The default seed does not clear an existing non-enterprise dataset. An explicit development-only `--reset` option creates a private backup before replacing domain data; it is not needed for a fresh database. See the [dataset report](ENTERPRISE_DATA_REPORT.md) for details.
 
-The fixture uses random seed **726** and a fixed reference date of **5 September 2026**. Business keys and generated values are deterministic; surrogate IDs and existing account hashes are preserved or database-assigned. Attendance covers the preceding 60 scheduled working days per employee, excluding approved leave dates. Payroll covers April?September 2026 with one run per salary structure: April?July Paid, August Validated, September Computed, plus a small October Draft. This produces 13 payruns, 1,501 payslips and 8,406 salary-rule lines. Earlier months without imported attendance correctly show zero recorded worked days; the existing wage-based payroll rules are not changed or prorated by the seed.
+## Evaluation walkthrough
 
-Expected fresh domain totals: 250 employees, 8 departments, 26 job positions, 3 employee types, 5 schedules, 295 contracts, 14,817 attendance rows, 4 leave types, 762 allocations, 420 leave requests, 2 salary structures, 9 rules, 150 notifications and 119 system audit entries. Five missing bank-account examples are introduced for September; previously computed Paid payslips retain their original records. Demo accounts have no seeded open attendance shift, allowing live check-in demonstrations.
+1. **Explore the landing page and sign in.** Review the responsive presentation and the confirmation animation that appears only after successful authentication.
+2. **Open Employees as Admin or HR Manager.** Search, filter and switch list/card views; inspect an employee's contracts, schedule and attendance history.
+3. **Review user access as Admin.** Open Users & Roles, inspect employee linking and role assignment, then compare the Employee workspace.
+4. **Exercise time off.** Use a suitable allocation/type, submit a request as Employee, approve it as HR and verify the balance and notification. Types without approval auto-approve according to their settings.
+5. **Create a payroll run.** Choose a period without conflicting payslips, select the salary structure, continue to eligibility and select employees. Confirm that the run is created only when Create Payrun is clicked.
+6. **Complete payroll.** Compute, inspect salary lines and warnings, resolve blocking issues, validate and mark paid. Download a paid payslip PDF and inspect its QR verification.
+7. **Review the dashboard and history.** Change date/department/type filters and inspect salary totals, statuses, attendance, time off and audit records.
 
-All five official demo credentials remain unchanged. Additional Employee accounts are `aarav.sharma@peoplepay360.com`, `diya.patel@peoplepay360.com`, and `isha.nair@peoplepay360.com`, initially using `Employee@123`. Reset does not overwrite passwords of existing accounts.
+Use the seeded local database for actions that change records. The existing [demo script](docs/DEMO_SCRIPT.md) provides additional walkthrough context.
 
-For evaluation, open Employees to see the 250 total, search `EMP-0250`, switch between list and cards, and filter by department/type/status. Open Attendance, Requests, Allocations and Payslips to browse server pages. List APIs default to 20 and reject limits above 100. Small employee selection controls fetch bounded pages to make all 250 choices available (up to 500). Open Payroll Dashboard and select **1 April?30 September 2026** to review all six months; September alone intentionally contains Computed rather than Paid salaries. Dashboard totals aggregate database records, not the visible list page.
+## Verification
 
-`python -m app.seed --verify` checks contracts, management cycles, schedules, allocation usage, payslip uniqueness/lines/totals and the live dashboard query. Read `ENTERPRISE_DATA_REPORT.md` for measured verification results and the precise changed-file list.
+Final audit recorded on **6 September 2026**:
 
+| Check | Result |
+| --- | --- |
+| Backend automated suite | **99 passed**, including 10 audit regression cases |
+| Frontend automated suite | **45 passed** |
+| Frontend production build | **Passed** |
+| Live role/page navigation | **60 combinations** across all five roles; no captured JavaScript errors or missing-page results |
+| Targeted UI follow-up | Employee-link selector, dashboard payslip statuses and schedule Company column confirmed |
 
-### Single check-in / checkout and scheduled breaks
+The backend regression tests run against an isolated SQLite test database. The live application uses MySQL. Navigation checks are smoke checks, not exhaustive CRUD, concurrency or device certification. Existing dependency deprecations and the Vite bundle-size warning do not fail these runs.
 
-Employees keep one check-in and one checkout per business day. Checkout finishes the day; it is not a break button. New check-ins snapshot the assigned schedule's break allowance for that weekday. For a completed shift lasting at least six hours, the allowance is deducted (capped at elapsed time). Shorter shifts have no automatic deduction. Example: 09:00?18:00 with a one-hour allowance gives nine hours on site, one hour scheduled break and eight net working hours. This policy uses scheduled allowances, not GPS or measured break activity.
+Run from the repository root:
 
-HR can correct the deducted hours from Attendance ? record ? Correct; an explicit duration and correction reason are required, with an audit record. A break cannot exceed elapsed time. Existing historical rows are marked `Legacy`, retain their recorded worked hours and show that no break deduction was recorded. New/explicitly corrected net hours feed the existing attendance-status rules. This does not recalculate already-paid payslips or introduce multiple attendance sessions.
+```powershell
+.\backend\venv\Scripts\python.exe -m pytest backend/tests -q
+npm test --prefix frontend
+npm run build --prefix frontend
+```
+
+Coverage includes role enforcement, record isolation, contract periods, payroll transitions and calculations, leave balances, PDF access and allocation date calculations. The [final requirements audit](EXCALIDRAW_REQUIREMENTS_AUDIT.md) is the current source for verification counts and reference alignment.
+
+## Scope and limitations
+
+- **Single company:** this installation represents PeoplePay360; multi-company switching and isolation are not implemented.
+- **Day-based leave:** inclusive calendar days are supported. Hourly requests and automatic holiday/weekend exclusion are not implemented.
+- **Explicit payroll policy:** attendance and unpaid-leave inputs affect salary only through configured rules. Periods intersecting multiple eligible contracts require review; automatic split-contract proration is not implemented.
+- **Attendance policy:** one check-in and checkout per business day. New completed shifts of at least six hours deduct the snapshotted scheduled break allowance, capped at elapsed time. Audited corrections are supported; historical legacy hours are retained.
+- **Paid-only documents:** PDF download is restricted to Paid payslips, with ownership/permission checks.
+- **Optional integrations:** SMTP support exists, but external email delivery was not certified in the final audit. Password reset, invitations and SSO are not implemented.
+- **Notifications:** updates use polling, not WebSockets. Real-device geolocation was not exercised during the final audit.
+- **Deployment:** the documented Vite proxy is for development. A hosted build needs an API reverse proxy or an appropriate API URL, matching CORS/cookie configuration, and deployment-specific secrets.
+
+## Repository and documentation
+
+```text
+peoplepay360/
+|-- backend/
+|   |-- app/          API routes, services, models and domain engines
+|   |-- alembic/      Versioned database migrations
+|   |-- tests/        Backend regression suite
+|   `-- .env.example  Configuration template
+|-- frontend/
+|   |-- src/          React pages, components, styles and tests
+|   |-- public/       Static website assets
+|   `-- .env.example  Frontend configuration template
+|-- docs/            Architecture and supporting design documentation
+|-- EXCALIDRAW_REQUIREMENTS_AUDIT.md
+|-- ENTERPRISE_DATA_REPORT.md
+`-- README.md
+```
+
+| Document | Purpose |
+| --- | --- |
+| [Final requirements audit](EXCALIDRAW_REQUIREMENTS_AUDIT.md) | Requirement-by-requirement evidence, fixes and limitations |
+| [Architecture](docs/ARCHITECTURE.md) | Application layers and request flow |
+| [Database design](docs/ERD.md) | Detailed entity documentation |
+| [Business rules](docs/BUSINESS_RULES.md) | Domain rules and workflow background |
+| [Roles and permissions](docs/RBAC.md) | Access-control model |
+| [Acceptance tests](docs/ACCEPTANCE_TEST.md) | Supporting acceptance-flow documentation |
+| [Enterprise dataset](ENTERPRISE_DATA_REPORT.md) | Seed data and verification details |
+| [Backend guide](backend/README_BACKEND.md) | Backend-specific setup context |
+| [Frontend guide](frontend/README_FRONTEND.md) | Frontend-specific setup context |
+
+This README and the final audit describe the submission state; older supporting documents may contain earlier test totals.
