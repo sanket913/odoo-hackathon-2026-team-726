@@ -1,0 +1,38 @@
+.pp_auth .pp_auth_story { background: radial-gradient(ellipse at 75% 62%, #78508c88, transparent 58%), linear-gradient(150deg, #25172f, #493055); padding: 35px 40px 28px; }
+.pp_auth_pass_intro { position: relative; z-index: 1; margin-top: 36px; }
+.pp_auth_pass_eyebrow { display: flex; align-items: center; gap: 9px; font-size: 10px; letter-spacing: .18em; color: #c7aed8; }
+.pp_auth_pass_eyebrow::before { content: ''; width: 20px; height: 1px; background: #bda0cf; }
+.pp_auth .pp_auth_pass_intro h1 { font-size: clamp(37px, 3.9vw, 54px); line-height: 1.07; margin: 22px 0 17px; letter-spacing: -.055em; }
+.pp_auth_pass_intro h1 em { font-family: 'Segoe Print', 'Bradley Hand', cursive; font-size: .88em; font-style: normal; font-weight: 500; color: #d8b9ed; }
+.pp_auth_pass_intro > p { font-size: 14px; line-height: 1.8; color: #d0bddb; }
+.pp_auth_pass_scene { position: relative; perspective: 1100px; width: 100%; margin: 27px 0 25px; display: grid; place-items: center; }
+.pp_auth_pass_halo { position: absolute; width: 290px; height: 190px; bottom: -15px; border-radius: 50%; border: 1px solid #d8b8f044; background: radial-gradient(ellipse, #a17ab84a, transparent 68%); transform: rotateX(65deg); box-shadow: 0 0 0 20px #ffffff03; }
+.pp_auth_pass_card { position: relative; width: 265px; padding: 22px; border-radius: 19px; border: 1px solid #ffffffcf; background: linear-gradient(135deg, #fff, #f1e7f8 65%, #dbeae5); color: #4c315d; box-shadow: 3px 7px 0 #a588b4, 0 25px 40px #13091f65, inset 0 1px 0 #fff; transform: rotateY(-14deg) rotateZ(-7deg); text-align: center; }
+.pp_auth_pass_slot { width: 47px; height: 5px; margin: -12px auto 17px; border-radius: 8px; background: #b3a0bf; box-shadow: inset 0 2px 2px #5b41686b; }
+.pp_auth_pass_top { display: flex; justify-content: space-between; align-items: center; font-size: 9px; letter-spacing: .1em; color: #80638f; }
+.pp_auth_pass_avatar { width: 68px; height: 68px; display: grid; place-items: center; margin: 18px auto 14px; border-radius: 22px; border: 1px solid #fff; background: linear-gradient(140deg, #fff, #d5bde4); box-shadow: 0 4px 0 #cbb3d9, 0 10px 16px #72508715; }
+.pp_auth_pass_card > strong { display: block; font-size: 17px; letter-spacing: -.035em; }
+.pp_auth_pass_subtitle { display: block; margin-top: 5px; font-size: 11px; color: #86738f; }
+.pp_auth_pass_services { display: flex; justify-content: space-between; margin: 19px 0 16px; padding-bottom: 16px; border-bottom: 1px dashed #cdbbd8; }
+.pp_auth_pass_services > span { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #78588c; }
+.pp_auth_pass_bottom { display: flex; align-items: center; justify-content: space-between; color: #866c94; }
+.pp_auth_pass_barcode { width: 105px; height: 20px; background: repeating-linear-gradient(90deg, #977fa5 0 2px, transparent 2px 4px, #977fa5 4px 5px, transparent 5px 8px, #977fa5 8px 11px, transparent 11px 14px); opacity: .55; }
+.pp_auth_pass_float { position: absolute; right: 5%; top: 24%; display: grid; place-items: center; width: 51px; height: 51px; border-radius: 15px; color: #d5ece5; border: 1px solid #a6c7c45c; background: linear-gradient(145deg, #607d7e, #3b4b5a); box-shadow: 0 5px 0 #252231, 0 12px 24px #160c2440; transform: rotate(12deg); }
+.pp_auth_pass_footer { margin-top: auto; display: flex; align-items: center; gap: 9px; font-size: 11px; color: #c8b6d3; }
+.pp_auth_pass_footer > svg { color: #b4d7cc; }
+@media (prefers-reduced-motion: no-preference) {
+ .pp_auth_pass_card { animation: pp-pass-hover 8s ease-in-out infinite; }
+ .pp_auth_pass_float { animation: pp-pass-lock 6s ease-in-out infinite; }
+ @keyframes pp-pass-hover { 50% { transform: translateY(-7px) rotateY(-6deg) rotateZ(-3deg); } }
+ @keyframes pp-pass-lock { 50% { transform: translateY(7px) rotate(5deg); } }
+}
+@media (max-width: 700px) {
+ .pp_auth .pp_auth_story { padding: 25px; }
+ .pp_auth_pass_intro { margin-top: 23px; }
+ .pp_auth .pp_auth_pass_intro h1 { font-size: 32px; margin: 12px 0; }
+ .pp_auth_pass_intro h1 br { display: none; }
+ .pp_auth_pass_intro h1 em { display: block; margin-top: 5px; }
+ .pp_auth_pass_intro > p { font-size: 13px; }
+ .pp_auth_pass_scene { display: none; }
+ .pp_auth_pass_footer { margin-top: 17px; font-size: 10px; }
+}

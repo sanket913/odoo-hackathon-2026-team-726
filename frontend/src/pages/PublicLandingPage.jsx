@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, ArrowUpRight, Users, FileCheck2, Clock3, CalendarDays, Wallet, Layers3, ReceiptText, SlidersHorizontal, ChartNoAxesCombined, Bell, ShieldCheck, Check, Menu, X } from 'lucide-react'
 import { Brand } from '../components/Brand'
 import '../styles/peoplepay-public.css'
+import '../styles/landing-paper.css'
+import '../styles/workflow-journey.css'
+import { HeroWorkspace } from '../components/HeroWorkspace'
+import { ScrollEnvelope } from '../components/ScrollEnvelope'
 
 const navigation = [['Product', 'product'], ['HR Management', 'hr'], ['Attendance', 'attendance'], ['Payroll', 'payroll'], ['Why PeoplePay360', 'why']]
 const modules = [
@@ -47,14 +51,36 @@ function PublicNavbar() {
 
 export default function PublicLandingPage() {
   const workflowRef = useRef(null)
-  const [workflowVisible, setWorkflowVisible] = useState(false)
   useEffect(() => {
-    if (!('IntersectionObserver' in window)) { setWorkflowVisible(true); return }
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) { setWorkflowVisible(true); observer.disconnect() }
-    }, { threshold: 0.15 })
-    observer.observe(workflowRef.current)
-    return () => observer.disconnect()
+    const node = workflowRef.current
+    const motion = matchMedia('(prefers-reduced-motion: reduce)')
+    let frame = 0
+    const update = () => {
+      frame = 0
+      const enabled = !motion.matches && innerHeight >= 620
+      node.classList.toggle('has-scroll-stage', enabled)
+      const bounds = node.getBoundingClientRect()
+      const progress = Math.max(0, Math.min(1, (100 - bounds.top) / Math.max(1, bounds.height - innerHeight)))
+      const position = progress * 5
+      node.style.setProperty('--journey-progress', progress)
+      node.querySelectorAll('li').forEach((step, index) => {
+        const distance = index - position
+        step.style.setProperty('--card-x', `${distance * 82}px`)
+        step.style.setProperty('--card-y', `${Math.abs(distance) * 19}px`)
+        step.style.setProperty('--card-z', `${-Math.abs(distance) * 160}px`)
+        step.style.setProperty('--card-turn', `${distance * -12}deg`)
+        step.style.setProperty('--card-opacity', `${Math.max(0, 2.5 - Math.abs(distance))}`)
+        step.style.zIndex = String(20 - Math.round(Math.abs(distance) * 3))
+        step.classList.toggle('is-current', Math.round(position) === index)
+      })
+
+    }
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update) }
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    motion.addEventListener('change', schedule)
+    update()
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule); motion.removeEventListener('change', schedule) }
   }, [])
   const whyRef = useRef(null)
   const [whyVisible, setWhyVisible] = useState(false)
@@ -86,13 +112,7 @@ export default function PublicLandingPage() {
         <p className="pp-hero-copy">Bring the everyday work of HR and payroll together. <br className="pp-desktop-break" /> Less switching. More clarity. More time for your people.</p>
         <div className="pp-hero-actions"><span className="pp-hero-sidenote" aria-hidden="true">A better workday<br /><svg viewBox="0 0 95 40"><path d="M5 4 Q65 0 76 29 M63 23 L77 31 L83 17" /></svg></span><a className="pp-cta" href="#product">Explore PeoplePay360 <ArrowRight size={18} /></a><Link className="pp-cta pp-cta-secondary" to="/login">Sign In <ArrowUpRight size={18} /></Link></div>
         <p className="pp-hero-note"><ShieldCheck size={15} /> One workspace. Access that fits your role.</p>
-        <div className="pp-connection" aria-label="Connected employee and payroll workflows">
-          <span className="pp-connection-label">From the first day</span>
-          <div><Users /><span>People</span></div><span className="pp-connection-line" aria-hidden="true" />
-          <div><Clock3 /><span>Everyday work</span></div><span className="pp-connection-line" aria-hidden="true" />
-          <div><Wallet /><span>Payday</span></div>
-          <span className="pp-connection-label">To every payday</span>
-        </div>
+        <HeroWorkspace />
       </section>
 
       <section id="product" className="pp-modules pp-section" aria-labelledby="modules-title"><div className="pp-container">
@@ -115,9 +135,11 @@ export default function PublicLandingPage() {
         <article><Bell /><div><h3>Keep the next step in sight</h3><p>Review payroll warnings, follow request decisions and check payment notification status.</p></div></article>
       </div></div></section>
 
-      <section ref={workflowRef} className={`pp-workflow pp-container pp-section pp-workflow-showcase${workflowVisible ? ' is-visible' : ''}`} aria-labelledby="workflow-title">
+      <section ref={workflowRef} className="pp-workflow pp-container pp-section pp-workflow-showcase pp-journey" aria-labelledby="workflow-title">
+        <div className="pp-journey-stage"><div className="pp-journey-heading">
         <p className="pp-eyebrow">ONE CONTINUOUS WORKFLOW</p>
         <h2 id="workflow-title">From joining day to <span className="pp-why-script">payday.</span></h2>
+        <p className="pp-journey-intro">Every step brings your people and payroll closer together.</p><span className="pp-journey-cue">Scroll to follow the journey <ArrowRight size={16} /></span></div>
         <ol>{[
           ['Employee', Users, 'Bring your people onboard'],
           ['Contract', FileCheck2, 'Set the terms of work'],
@@ -131,9 +153,24 @@ export default function PublicLandingPage() {
           <strong>{step}</strong><p className="pp-flow-description">{description}</p>
           {i < 5 && <ArrowRight className="pp-flow-arrow" size={16} aria-hidden="true" />}
         </li>)}</ol>
+        <div className="pp-journey-meter" aria-hidden="true"><span /></div></div>
       </section>
 
-      <section className="pp-final-cta pp-container"><span className="pp-eyebrow">READY WHEN YOU ARE</span><div className="pp-cta-emblems" aria-hidden="true"><span><Users size={24} /></span><span><Clock3 size={24} /></span><span><Wallet size={24} /></span></div><h2>Make workforce operations <em>simpler.</em></h2><p>Your people, attendance and payroll. Together in one workspace.</p><Link className="pp-cta" to="/login">Open PeoplePay360 <ArrowRight size={18} /></Link><div className="pp-cta-orbit" aria-hidden="true" /></section>
+      <ScrollEnvelope>
+      <section className="pp-paper-cta pp-container" aria-labelledby="paper-cta-title">
+        <div className="pp-paper-photo">
+          <img src="/images/workplace-team.webp" alt="" loading="lazy" decoding="async" width="1536" height="1024" />
+          <div className="pp-paper-caption"><span>PEOPLE FIRST. EVERY WORKDAY.</span><p>Good work starts<br />with your people.</p></div>
+        </div>
+        <div className="pp-paper-copy">
+          <p className="pp-eyebrow">READY WHEN YOU ARE</p>
+          <div className="pp-paper-icons" aria-hidden="true"><span><Users size={23} /></span><span><Clock3 size={23} /></span><span><Wallet size={23} /></span></div>
+          <h2 id="paper-cta-title">Make workforce<br />operations <em>simpler.</em></h2>
+          <p className="pp-paper-description">Your people, attendance and payroll.<br />Together in one workspace.</p>
+          <Link className="pp-cta" to="/login">Open PeoplePay360 <ArrowRight size={18} /></Link>
+        </div>
+      </section>
+      </ScrollEnvelope>
     </main>
     <footer className="pp-public-footer pp-container pp-footer-showcase">
       <div className="pp-footer-main">

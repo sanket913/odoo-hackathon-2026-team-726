@@ -1,0 +1,34 @@
+.pp-public .pp-journey { position: relative; margin-block: 45px 65px; padding: 0; }
+.pp-journey-stage { position: relative; padding: 45px 30px; border: 1px solid #e4d8ec; border-radius: 30px; background: radial-gradient(ellipse at 75% 55%, #d8c4e957, transparent 60%), #f6f1fa; overflow: hidden; }
+.pp-journey-heading { text-align: left; }
+.pp-public .pp-journey h2 { font-size: clamp(32px, 3.5vw, 48px); line-height: 1.2; margin: 20px 0; }
+.pp-public .pp-journey-intro { color: #7a6886; font-size: 15px; line-height: 1.8; max-width: 320px; }
+.pp-journey-cue { display: inline-flex; gap: 12px; align-items: center; font-size: 12px; color: #866693; margin-top: 28px; }
+.pp-public .pp-journey.has-scroll-stage { height: 290vh; }
+.has-scroll-stage .pp-journey-stage { position: sticky; top: 100px; height: min(580px, calc(100vh - 135px)); display: grid; grid-template-columns: .9fr 1.1fr; gap: 30px; align-items: center; padding: 45px; }
+.pp-public .pp-journey ol { margin: 30px 0; }
+.pp-public .pp-journey.has-scroll-stage ol { display: block; position: relative; height: 370px; margin: 0; padding: 0; perspective: 1100px; }
+.pp-public .pp-journey.has-scroll-stage li { position: absolute; width: 290px; height: 340px; top: 15px; left: calc(50% - 145px); padding: 26px; align-items: flex-start; text-align: left; border: 1px solid #d0b9de; border-radius: 24px; background: linear-gradient(140deg, #fff 20%, var(--step-tint)); box-shadow: 0 7px 0 #dacbe4, 0 25px 40px -15px #42225055; transform: translate3d(var(--card-x), var(--card-y), var(--card-z)) rotateY(var(--card-turn)); opacity: var(--card-opacity); transition: none; }
+.pp-public .pp-journey li .pp-flow-number { position: static; width: auto; height: auto; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; font-size: 36px; font-weight: 600; letter-spacing: -.06em; color: #b49ac2; }
+.pp-journey .pp-flow-icon { width: 65px; height: 65px; margin: 17px 0 27px; }
+.pp-public .pp-journey li strong { font-size: 23px; line-height: 1.2; color: #4b315d; }
+.pp-public .pp-journey .pp-flow-description { max-width: 220px; font-size: 14px; line-height: 1.65; margin-top: 12px; color: #756181; }
+.pp-public .pp-journey li > .pp-flow-arrow { display: none; }
+.pp-journey-meter { display: none; }
+.has-scroll-stage .pp-journey-meter { display: block; position: absolute; bottom: 25px; left: 45px; right: 45px; height: 3px; background: #e0d4e8; border-radius: 5px; overflow: hidden; }
+.pp-journey-meter > span { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, #886298, #4e9e95); transform: scaleX(var(--journey-progress, 0)); transform-origin: left; }
+@media (max-width: 700px) {
+ .has-scroll-stage .pp-journey-stage { display: block; top: 85px; height: calc(100vh - 115px); padding: 25px 18px; }
+ .pp-public .pp-journey h2 { font-size: 30px; margin: 12px 0; }
+ .pp-public .pp-journey-intro, .has-scroll-stage .pp-journey-cue { display: none; }
+ .pp-public .pp-journey.has-scroll-stage ol { margin-top: 25px; height: 310px; }
+ .pp-public .pp-journey.has-scroll-stage li { width: 230px; left: calc(50% - 115px); height: 290px; padding: 21px; }
+ .pp-public .pp-journey li strong { font-size: 20px; }
+ .pp-journey .pp-flow-icon { width: 49px; height: 49px; margin: 12px 0 20px; }
+ .has-scroll-stage .pp-journey-meter { left: 20px; right: 20px; bottom: 18px; }
+}
+.pp-public .pp-journey.has-scroll-stage li.is-current { opacity: 1; }
+.pp-public .pp-journey.has-scroll-stage li strong { font-size: 23px; }
+.pp-public .pp-journey.has-scroll-stage li .pp-flow-description { font-size: 14px; }
+.pp-public .pp-journey.has-scroll-stage li .pp-flow-number { font-size: 36px; }
+.pp-journey.has-scroll-stage li:not(.is-current) > strong, .pp-journey.has-scroll-stage li:not(.is-current) > .pp-flow-description { visibility: hidden; }
