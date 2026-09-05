@@ -67,7 +67,7 @@ export default function TimeOffTypeFormPage() {
           <Field label="Unit">
             <Select value={unit} onChange={(e) => setUnit(e.target.value)}>
               <option value="Days">Days</option>
-              <option value="Hours">Hours</option>
+              <option value="Hours" disabled>Hours (not supported by date-based requests)</option>
             </Select>
           </Field>
           <div className="space-y-2">

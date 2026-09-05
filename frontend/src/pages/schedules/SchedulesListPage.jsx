@@ -2,7 +2,7 @@ import { FilterField } from '../../components/FilterToolbar'
 import { useState } from 'react'
 import { ListSearch, ListPagination, useListSearch } from '../../components/ListSearch'
 import { useQuery } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import { scheduleService } from '../../lib/api/services/scheduleService'
 import { queryKeys } from '../../lib/queryKeys'
@@ -11,6 +11,7 @@ import { PERMISSIONS } from '../../lib/permissions/permissions'
 import { Button, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge } from '../../components/ui'
 
 export default function SchedulesListPage() {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const { hasPermission } = useAuth()
   const [view, setView] = useState('list')
@@ -49,11 +50,11 @@ export default function SchedulesListPage() {
       {!isLoading && !isError && filtered.length > 0 && view === 'list' && (
         <div className="o_list_view table-wrap">
           <table className="o_list_table pp-table">
-            <thead><tr><th>Name</th>{columns.type && <th>Type</th>}{columns.days && <th>Days / Week</th>}{columns.hours && <th>Weekly Hours</th>}{columns.status && <th>Status</th>}</tr></thead>
+            <thead><tr><th>Name</th><th>Company</th>{columns.type && <th>Type</th>}{columns.days && <th>Days / Week</th>}{columns.hours && <th>Weekly Hours</th>}{columns.status && <th>Status</th>}</tr></thead>
             <tbody>
               {filtered.map((s) => (
-                <tr key={s.id}>
-                  <td className="font-medium text-foreground"><Link className="hover:text-primary" to={`/schedules/${s.id}`}>{s.name}</Link></td>
+                <tr key={s.id} className="cursor-pointer" onClick={() => navigate(`/schedules/${s.id}`)}>
+                  <td className="font-medium text-foreground"><Link className="hover:text-primary" to={`/schedules/${s.id}`}>{s.name}</Link></td><td>{s.company || 'PeoplePay360'}</td>
                   {columns.type && <td>{s.type}</td>}
                   {columns.days && <td>{new Set((s.lines || []).map(line => line.day_of_week)).size}</td>}
                   {columns.hours && <td>{s.weekly_hours} hrs</td>}

@@ -27,7 +27,7 @@ export function AttendanceWidget() {
   const seconds = started ? Math.max(0, Math.floor((now - started) / 1000)) : 0
   const elapsed = `${Math.floor(seconds / 3600)}:${String(Math.floor(seconds / 60) % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
   return <>
-    <button type="button" className="o_topbar_button" aria-label="My attendance" onClick={() => setOpen(true)}><Clock size={18} />{checkedIn && <span className="h-2 w-2 rounded-full bg-success" aria-label="Checked in" />}</button>
+    <button type="button" className="o_topbar_button" aria-label="My attendance" onClick={() => setOpen(true)}><Clock size={18} />{query.isSuccess && <span className={`h-2 w-2 rounded-full ${checkedIn ? 'bg-success' : 'bg-danger'}`} aria-label={checkedIn ? 'Checked in' : 'Not checked in'} />}</button>
     <Modal open={open} onClose={() => setOpen(false)} title="My attendance">
       <p className="mb-3 font-medium">{user.full_name}</p>
       {query.isLoading ? <LoadingState /> : query.isError ? <ErrorState message="Could not load today's attendance." onRetry={query.refetch} /> : <div className="space-y-4">

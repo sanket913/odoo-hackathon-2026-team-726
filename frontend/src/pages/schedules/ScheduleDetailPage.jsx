@@ -30,7 +30,7 @@ export default function ScheduleDetailPage() {
           )
         }
       />
-      <Card className="mb-4 flex flex-wrap items-center gap-4 p-4"><span>Days / week: <strong>{new Set(schedule.lines.map(line => line.day_of_week)).size}</strong></span><span>Hours / week: <strong>{schedule.weekly_hours}</strong></span><Badge tone={schedule.active ? 'success' : 'muted'}>{schedule.active ? 'Active' : 'Inactive'}</Badge></Card>
+      <Card className="mb-4 flex flex-wrap items-center gap-4 p-4"><span>Company: <strong>{schedule.company || 'PeoplePay360'}</strong></span><span>Days / week: <strong>{new Set(schedule.lines.map(line => line.day_of_week)).size}</strong></span><span>Hours / week: <strong>{schedule.weekly_hours}</strong></span><Badge tone={schedule.active ? 'success' : 'muted'}>{schedule.active ? 'Active' : 'Inactive'}</Badge></Card>
       <div className="o_list_view table-wrap">
         <table className="o_list_table pp-table">
           <thead><tr><th>Day</th><th>Start</th><th>End</th><th>Break</th><th>Duration</th></tr></thead>

@@ -91,6 +91,7 @@ export default function PayrollDashboardPage() {
             <KpiCard label="On Leave Today" value={data.kpis.on_leave_today} />
           </div>
 
+          <Card className="mb-4"><CardHeader>Payslip Status</CardHeader><CardBody><div className="grid grid-cols-2 gap-4 sm:grid-cols-4">{Object.entries(data.payslip_status || {}).map(([status, count]) => <div key={status} className="rounded-lg border border-border p-4"><span className="text-sm text-muted">{status}</span><strong className="block text-2xl mt-2">{count}</strong></div>)}</div></CardBody></Card>
           <div className="mb-4 grid gap-4 lg:grid-cols-2">
             <Card>
               <CardHeader>Salary Cost by Department</CardHeader>

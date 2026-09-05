@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import AdminUsersPage from './AdminUsersPage'
 import { userService } from '../../lib/api/services/userService'
 
+vi.mock('../../lib/api/services/employeeService', () => ({ employeeService: { list: vi.fn().mockResolvedValue({ items: [] }) } }))
 vi.mock('../../lib/auth/AuthContext', () => ({ useAuth: () => ({ user: { id: 99 }, hasPermission: () => true }) }))
 vi.mock('../../lib/api/services/userService', () => ({ userService: {
   list: vi.fn(), roles: vi.fn(), create: vi.fn(), update: vi.fn(), updateRoles: vi.fn(),

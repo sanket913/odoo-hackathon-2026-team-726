@@ -114,7 +114,7 @@ export default function SalaryRuleFormPage() {
           )}
           {computationType === 'Formula' && (
             <Field label="Formula" required>
-              <Input value={formulaText} onChange={(e) => setFormulaText(e.target.value)} placeholder="BASIC + HRA + CONV" required />
+              <Input value={formulaText} onChange={(e) => setFormulaText(e.target.value)} placeholder="BASIC + HRA + CONV" required /><p className="text-xs text-muted mt-2">Available: WAGE, WORKED_DAYS, WORKED_HOURS, PERIOD_DAYS, SCHEDULED_DAYS, SCHEDULED_HOURS, OVERTIME_HOURS, UNPAID_DAYS, and earlier rule codes. Unpaid days use calendar days; schedule totals exclude breaks.</p>
               <p className="mt-1 text-xs text-muted">Only + − × ÷, parentheses, and known rule codes are allowed.</p>
             </Field>
           )}

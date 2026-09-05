@@ -5,6 +5,7 @@ import { ListPagination, ListSearch, useListSearch } from '../../components/List
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { employeeService } from '../../lib/api/services/employeeService'
 import { userService } from '../../lib/api/services/userService'
 import { queryKeys } from '../../lib/queryKeys'
 import { invalidateAfter } from '../../lib/invalidation'
@@ -24,13 +25,16 @@ export default function AdminUsersPage() {
     queryKey: queryKeys.users({ page }), queryFn: () => userService.list({ page, limit: 50 }),
   })
   const { data: roles = [] } = useQuery({ queryKey: queryKeys.roles, queryFn: userService.roles })
+  const [employeeSearch, setEmployeeSearch] = useState('')
+  const { data: employeePage } = useQuery({ queryKey: ['users', 'link-employees', employeeSearch],
+    queryFn: () => employeeService.list({ search: employeeSearch, limit: 100 }), enabled: !!account && !account.id })
   const users = data?.items || []
   const { search, setSearch, filtered } = useListSearch(users, ['full_name', 'email'])
   const visibleUsers = filtered.filter(user => !roleFilter || user.roles.includes(roleFilter))
   const saveAccount = useMutation({
     mutationFn: () => account.id
       ? userService.update(account.id, { full_name: account.full_name, is_active: account.is_active })
-      : userService.create({ full_name: account.full_name, email: account.email, password: account.password, role_names: account.role_names }),
+      : userService.create({ full_name: account.full_name, email: account.email, password: account.password, role_names: account.role_names, ...(account.employee_id ? { employee_id: Number(account.employee_id) } : {}) }),
     onSuccess: () => { invalidateAfter(queryClient, 'user:mutated'); toast.success(account.id ? 'User updated' : 'User created'); setAccount(null) },
     onError: error => toast.error(getErrorMessage(error)),
   })
@@ -82,6 +86,7 @@ export default function AdminUsersPage() {
         {account && <form className="space-y-4" onSubmit={event => { event.preventDefault(); saveAccount.mutate() }}>
           <Field label="Full name" required><Input value={account.full_name} required onChange={event => setAccount({ ...account, full_name: event.target.value })} /></Field>
           <Field label="Work email" required><Input type="email" value={account.email} required disabled={!!account.id} onChange={event => setAccount({ ...account, email: event.target.value })} /></Field>
+          {!account.id && <Field label="Link employee"><Input aria-label="Find employee to link" placeholder="Search employee name or email" value={employeeSearch} onChange={event => setEmployeeSearch(event.target.value)} /><Select aria-label="Link employee" value={account.employee_id || ''} onChange={event => setAccount({ ...account, employee_id: event.target.value })}><option value="">No employee linked</option>{(employeePage?.items || []).filter(employee => !employee.user_id).map(employee => <option key={employee.id} value={employee.id}>{employee.name} - {employee.employee_code}</option>)}</Select><p className="text-xs text-muted mt-1">Select the employee this account belongs to. Existing linked employees are excluded.</p></Field>}
           {!account.id && <><Field label="Initial password" required><Input type="password" autoComplete="new-password" minLength={6} value={account.password} required onChange={event => setAccount({ ...account, password: event.target.value })} /></Field><fieldset><legend className="o_label">Roles</legend>{roles.map(role => <label key={role.id} className="mb-2 flex items-center gap-2"><input type="checkbox" checked={account.role_names.includes(role.name)} onChange={event => setAccount({ ...account, role_names: event.target.checked ? [...account.role_names, role.name] : account.role_names.filter(name => name !== role.name) })} />{role.name}</label>)}</fieldset></>}
           {account.id && <label className="flex items-center gap-2"><input type="checkbox" checked={account.is_active} onChange={event => setAccount({ ...account, is_active: event.target.checked })} />Active account</label>}
           <div className="flex justify-end gap-2"><Button type="button" variant="outline" onClick={() => setAccount(null)}>Cancel</Button><Button type="submit" disabled={saveAccount.isPending}>{saveAccount.isPending ? 'Saving...' : account.id ? 'Save User' : 'Create User'}</Button></div>
