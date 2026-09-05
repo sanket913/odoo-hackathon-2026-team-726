@@ -1,6 +1,6 @@
 import datetime
 from decimal import Decimal
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 
 class TimeOffTypeCreate(BaseModel):
@@ -40,9 +40,15 @@ class AllocationCreate(BaseModel):
     employee_id: int
     time_off_type_id: int
     name: str = ""
-    allocated: Decimal
+    allocated: Decimal = Field(gt=0)
     valid_from: datetime.date
     valid_to: datetime.date
+
+    @model_validator(mode="after")
+    def validate_validity(self):
+        if self.valid_to < self.valid_from:
+            raise ValueError("End date must be on or after the start date.")
+        return self
 
 
 class AllocationOut(BaseModel):

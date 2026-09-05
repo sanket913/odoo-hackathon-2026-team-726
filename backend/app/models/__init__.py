@@ -16,3 +16,5 @@ from app.models.salary import SalaryStructure, SalaryRule  # noqa
 from app.models.payroll import Payrun, Payslip, PayslipLine  # noqa
 from app.models.notification import Notification  # noqa
 from app.models.audit import AuditLog  # noqa
+
+from app.models.identifier import IdentifierSequence

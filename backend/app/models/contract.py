@@ -25,7 +25,7 @@ class Contract(TimestampMixin, Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     employee_id: Mapped[int] = mapped_column(ForeignKey("employees.id", ondelete="CASCADE"), nullable=False)
-    reference: Mapped[str] = mapped_column(String(64), nullable=False)
+    reference: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
     start_date: Mapped[datetime.date] = mapped_column(Date, nullable=False)
     end_date: Mapped[Optional[datetime.date]] = mapped_column(Date, nullable=True)
     wage: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)

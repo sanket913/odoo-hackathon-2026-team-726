@@ -59,9 +59,12 @@ def create_contract(db: Session, payload) -> Contract:
                 code="CONTRACT_OVERLAP",
             )
 
+    from app.services.identifier_service import next_identifier
+    reference = next_identifier(db, f"contract-{payload.start_date.year}",
+                                f"CTR-{payload.start_date.year}-", Contract, Contract.reference)
     contract = Contract(
         employee_id=payload.employee_id,
-        reference=payload.reference,
+        reference=reference,
         start_date=payload.start_date,
         end_date=payload.end_date,
         wage=payload.wage,
@@ -79,6 +82,9 @@ def create_contract(db: Session, payload) -> Contract:
 def update_contract(db: Session, contract_id: int, payload) -> Contract:
     contract = get_contract(db, contract_id)
     data = payload.model_dump(exclude_unset=True)
+    if data.get("reference") not in (None, contract.reference):
+        raise ConflictError("Contract reference is generated automatically and cannot be changed.")
+    data.pop("reference", None)
 
     new_start = data.get("start_date", contract.start_date)
     new_end = data.get("end_date", contract.end_date)

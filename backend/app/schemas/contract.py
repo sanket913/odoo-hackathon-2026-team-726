@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 class ContractCreate(BaseModel):
     employee_id: int
-    reference: str
+    reference: str | None = None
     start_date: datetime.date
     end_date: datetime.date | None = None
     wage: Decimal = Field(gt=0)

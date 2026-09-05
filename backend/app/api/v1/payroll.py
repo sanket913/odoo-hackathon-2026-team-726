@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.deps import require_permission, get_current_user, CurrentUser
 from app.core.permissions import P_PAYRUN_READ, P_PAYRUN_CREATE, P_PAYRUN_COMPUTE, P_PAYRUN_VALIDATE, P_PAYRUN_MARK_PAID, P_PAYRUN_SEND, P_PAYSLIP_READ_ALL, P_PAYSLIP_PRINT
-from app.core.exceptions import PermissionDeniedError
+from app.core.exceptions import PermissionDeniedError, ConflictError
 from app.schemas.payroll import EligibilityRequest, PayrunCreateRequest
 from app.services import payroll_service
 from app.models.employee import Employee
@@ -121,6 +121,8 @@ def download_payslip_pdf(payslip_id: int, db: Session = Depends(get_db), current
         emp = db.query(Employee).filter(Employee.user_id == current.id).first()
         if not emp or emp.id != payslip.employee_id:
             raise PermissionDeniedError("You may only download your own payslip")
+    if payslip.status != "Paid":
+        raise ConflictError("PDF download is available only after the payslip is marked Paid.", code="PAYSLIP_NOT_PAID")
     pdf_bytes = generate_payslip_pdf(payslip)
     return Response(content=pdf_bytes, media_type="application/pdf", headers={
         "Content-Disposition": f'inline; filename="payslip-{payslip.id}.pdf"'

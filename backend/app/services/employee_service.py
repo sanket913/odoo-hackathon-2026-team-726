@@ -11,8 +11,8 @@ from app.core.exceptions import NotFoundError, ValidationAppError
 
 
 def _next_employee_code(db: Session) -> str:
-    count = db.query(Employee).count()
-    return f"EMP-{count + 1:04d}"
+    from app.services.identifier_service import next_identifier
+    return next_identifier(db, "employee", "EMP-", Employee, Employee.employee_code, digits=4)
 
 
 def to_out_dict(db: Session, emp: Employee) -> dict:

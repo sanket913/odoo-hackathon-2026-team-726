@@ -18,9 +18,9 @@ def _make_employee(db, code="EMP-T1"):
 
 def test_get_applicable_contract_resolves_correct_period(db):
     emp = _make_employee(db, "EMP-CP1")
-    old = Contract(employee_id=emp.id, reference="C1", start_date=datetime.date(2025, 1, 1),
+    old = Contract(employee_id=emp.id, reference=f"{emp.employee_code}-C1", start_date=datetime.date(2025, 1, 1),
                     end_date=datetime.date(2025, 6, 30), wage=Decimal("30000.00"), status=ContractStatus.EXPIRED)
-    new = Contract(employee_id=emp.id, reference="C2", start_date=datetime.date(2025, 7, 1),
+    new = Contract(employee_id=emp.id, reference=f"{emp.employee_code}-C2", start_date=datetime.date(2025, 7, 1),
                     end_date=None, wage=Decimal("40000.00"), status=ContractStatus.ACTIVE)
     db.add_all([old, new])
     db.commit()
@@ -40,14 +40,14 @@ def test_get_applicable_contract_returns_none_when_no_coverage(db):
 
 def test_overlapping_active_contracts_is_blocking_conflict(db):
     emp = _make_employee(db, "EMP-CP3")
-    c1 = Contract(employee_id=emp.id, reference="C1", start_date=datetime.date(2025, 1, 1),
+    c1 = Contract(employee_id=emp.id, reference=f"{emp.employee_code}-C1", start_date=datetime.date(2025, 1, 1),
                    end_date=None, wage=Decimal("30000.00"), status=ContractStatus.ACTIVE)
     db.add(c1)
     db.commit()
 
     # Simulate a data-integrity bug: force a second overlapping ACTIVE contract directly
     # (bypassing the service-layer overlap guard) to prove the repository detects it.
-    c2 = Contract(employee_id=emp.id, reference="C2", start_date=datetime.date(2025, 6, 1),
+    c2 = Contract(employee_id=emp.id, reference=f"{emp.employee_code}-C2", start_date=datetime.date(2025, 6, 1),
                    end_date=None, wage=Decimal("35000.00"), status=ContractStatus.ACTIVE)
     db.add(c2)
     db.commit()
@@ -58,7 +58,7 @@ def test_overlapping_active_contracts_is_blocking_conflict(db):
 
 def test_find_overlapping_active_contracts_detects_overlap(db):
     emp = _make_employee(db, "EMP-CP4")
-    c1 = Contract(employee_id=emp.id, reference="C1", start_date=datetime.date(2025, 1, 1),
+    c1 = Contract(employee_id=emp.id, reference=f"{emp.employee_code}-C1", start_date=datetime.date(2025, 1, 1),
                    end_date=datetime.date(2025, 12, 31), wage=Decimal("30000.00"), status=ContractStatus.ACTIVE)
     db.add(c1)
     db.commit()

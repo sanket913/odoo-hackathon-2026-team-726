@@ -104,3 +104,11 @@ scoping.
 
 See `docs/ARCHITECTURE.md` in the repository root for the full layered-architecture
 explanation (routers → services → repositories → engines → models).
+
+
+## Automatic record identifiers
+
+Run `python -m alembic upgrade head` before using the updated contract and employee creation flows.
+Contracts receive `CTR-<start-year>-<six-digit number>` when saved; the reference is read-only and remains unchanged when dates or other details are edited. Legacy references are preserved. The database enforces contract reference uniqueness, and the migration stops for review if legacy duplicates exist.
+Employee codes use `EMP-<four-or-more-digit number>`. Both flows use transactional database counters and skip existing identifiers, rather than counting rows. Deleted committed numbers are not reused. Counters roll back with failed saves.
+Payrun names already derive from period and structure. Payslips, attendance, leave requests and allocations retain their database-generated record IDs. Salary-rule and leave-type codes remain meaningful configuration values, not automatic document numbers.
