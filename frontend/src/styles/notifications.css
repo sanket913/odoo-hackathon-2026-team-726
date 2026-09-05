@@ -1,0 +1,25 @@
+.o_topbar .pp-notifications { width: 410px; max-width: calc(100vw - 24px); color: #43354e; border: 1px solid #e7dfed; border-radius: 14px; box-shadow: 0 16px 48px #34234224; overflow: hidden; background: white; }
+.pp-notification-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 18px 14px; }
+.pp-notification-header h2 { font-size: 15px; font-weight: 650; }
+.pp-notification-header p { margin-top: 3px; font-size: 11px; color: #887791; }
+.pp-notification-header > button { padding: 6px; border-radius: 7px; color: #887791; }
+.pp-notification-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0 16px 12px; border-bottom: 1px solid #ede7f2; font-size: 11px; }
+.pp-notification-toolbar [role=group] { display: flex; gap: 3px; border-radius: 8px; background: #f5f1f8; padding: 3px; }
+.pp-notification-toolbar [role=group] button { padding: 6px 11px; border-radius: 6px; }
+.pp-notification-toolbar button[aria-pressed=true] { background: white; color: #704c84; box-shadow: 0 1px 3px #44304f14; }
+.pp-read-all { display: flex; align-items: center; gap: 5px; color: #79568c; }
+.pp-notifications button:disabled { opacity: .5; cursor: default; }
+.pp-notifications button:focus-visible { outline: 2px solid #956eae; outline-offset: -2px; }
+.pp-notification-list { max-height: min(440px, calc(100dvh - 190px)); overflow-y: auto; overscroll-behavior: contain; }
+.pp-notification-item { display: flex; align-items: flex-start; border-bottom: 1px solid #f0ebf4; }
+.pp-notification-item.is-unread { background: #f8f4fb; }
+.pp-notification-item:hover { background: #f4eff8; }
+.pp-notification-content { flex: 1; min-width: 0; display: flex; flex-direction: column; text-align: left; gap: 5px; padding: 15px 18px; }
+.pp-notification-title { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 12px; }
+.pp-unread-dot { width: 6px; height: 6px; background: #9863b3; border-radius: 50%; flex-shrink: 0; }
+.pp-notification-body { font-size: 12px; line-height: 1.6; color: #7e6e89; overflow-wrap: anywhere; }
+.pp-notification-meta { font-size: 10px; color: #97879f; text-transform: capitalize; }
+.pp-notification-read { flex-shrink: 0; padding: 7px; margin: 10px 8px 0 0; border-radius: 7px; color: #896399; }
+.pp-notification-empty { padding: 32px 20px; display: flex; flex-direction: column; align-items: center; gap: 9px; color: #8b7995; text-align: center; font-size: 12px; }
+.pp-notification-more { width: 100%; padding: 13px; font-size: 12px; color: #79568c; }
+@media (max-width: 600px) { .o_topbar .pp-notifications { position: fixed; top: 62px; left: 12px; right: 12px; width: auto; } }

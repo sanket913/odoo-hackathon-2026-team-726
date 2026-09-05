@@ -1,0 +1,19 @@
+.pp-employee-attendance { min-width: 0; }
+.pp-history-heading { display: flex; align-items: center; gap: 12px; padding: 22px 20px; background: linear-gradient(115deg, #f5eff9, #fff 80%); border-bottom: 1px solid #e9e1ef; }
+.pp-history-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; color: #704883; background: #e9ddf0; flex-shrink: 0; }
+.pp-history-heading h2 { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+.pp-history-heading p, .pp-history-controls p { font-size: 12px; color: #748095; margin: 0; }
+.pp-history-count { margin-left: auto; white-space: nowrap; font-size: 12px; color: #704883; background: white; border: 1px solid #e9e1ef; border-radius: 20px; padding: 6px 10px; }
+.pp-history-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; padding: 16px 20px; }
+.pp-history-controls label { display: grid; gap: 6px; font-size: 12px; font-weight: 600; flex: 1 1 130px; }
+.pp-history-controls select { height: 38px; border: 1px solid #e3d8eb; border-radius: 9px; background: white; padding: 0 10px; width: 100%; color: #354155; }
+.pp-history-controls p { flex: 1 1 170px; padding-bottom: 10px; }
+.pp-employee-attendance .pp-table td { padding-top: 13px; padding-bottom: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pp-history-date { font-weight: 600; color: #704883; text-decoration: underline; text-decoration-color: #e3d8eb; text-underline-offset: 3px; }
+.pp-employee-attendance td small { display: block; color: #748095; margin-top: 3px; font-size: 11px; }
+.pp-history-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-top: 1px solid #e9e1ef; color: #748095; font-size: 12px; }
+.pp-history-footer nav { display: flex; gap: 5px; }
+.pp-history-footer button { min-width: 32px; padding-left: 8px; padding-right: 8px; }
+.pp-history-empty { display: grid; justify-items: center; gap: 10px; padding: 40px 20px; text-align: center; color: #748095; }
+.pp-history-empty h3 { color: #354155; font-weight: 600; }
+@media (max-width: 600px) { .pp-history-heading { flex-wrap: wrap; padding: 16px; } .pp-history-count { margin-left: 56px; } .pp-history-controls, .pp-history-footer { padding: 14px; } .pp-history-footer { justify-content: center; } .pp-history-footer nav { order: 3; width: 100%; justify-content: center; } }
