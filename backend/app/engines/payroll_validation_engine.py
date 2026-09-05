@@ -20,7 +20,7 @@ def build_warnings(db: Session, employee: Employee, contract: Contract | None, p
     if contract is None:
         warnings.append(warning(
             "NO_VALID_CONTRACT",
-            f"No active contract found for {employee.name} covering this payroll period.",
+            f"No applicable contract found for {employee.name} covering this payroll period.",
             "blocking",
         ))
 
@@ -79,9 +79,9 @@ def validate_payslip_before_generate(employee_id, period_start, period_end, db, 
     try:
         contract = get_applicable_contract(db, employee_id, period_start, period_end)
         if not contract:
-            add("contract", "NO_VALID_CONTRACT", "No active contract", "blocking")
+            add("contract", "NO_VALID_CONTRACT", "No applicable contract", "blocking")
     except ConflictError:
-        add("contract", "CONTRACT_CONFLICT", "Multiple overlapping active contracts", "blocking")
+        add("contract", "CONTRACT_CONFLICT", "Multiple applicable contracts", "blocking")
     month_start = period_start.replace(day=1)
     month_end = period_start.replace(day=calendar.monthrange(period_start.year, period_start.month)[1])
     query = db.query(Payslip).filter(Payslip.employee_id == employee_id,

@@ -84,8 +84,8 @@ def compute_eligibility(db: Session, salary_structure_id: int, period_start, per
                 "department_name": emp.department.name if emp.department else None,
                 "employee_type_name": emp.employee_type.name if emp.employee_type else None,
                 "contract_id": None, "wage": None, "eligible": False,
-                "reason": "Multiple overlapping active contracts (data integrity error)",
-                "has_warning": True, "warning": "Multiple overlapping active contracts",
+                "reason": "Multiple applicable contracts (data integrity error)",
+                "has_warning": True, "warning": "Multiple applicable contracts",
             })
             continue
         if contract is None:
@@ -94,8 +94,8 @@ def compute_eligibility(db: Session, salary_structure_id: int, period_start, per
                 "department_name": emp.department.name if emp.department else None,
                 "employee_type_name": emp.employee_type.name if emp.employee_type else None,
                 "contract_id": None, "wage": None, "eligible": False,
-                "reason": "No active contract for this period - cannot generate payslip",
-                "has_warning": True, "warning": "No active contract for this period - cannot generate payslip",
+                "reason": "No applicable contract for this period - cannot generate payslip",
+                "has_warning": True, "warning": "No applicable contract for this period - cannot generate payslip",
             })
             continue
         results.append({
@@ -137,6 +137,8 @@ def create_payrun(db: Session, payload, actor_user_id: int | None) -> Payrun:
         employee = db.query(Employee).filter(Employee.id == employee_id).with_for_update().first()
         if not employee or not employee.active:
             raise ValidationAppError("Selected employee is missing or inactive", status_code=400)
+        if payload.department_id and employee.department_id != payload.department_id:
+            raise ValidationAppError("Selected employee is outside the payrun department scope")
         warnings = validate_payslip_before_generate(employee_id, payload.period_start, payload.period_end, db, lock=True)
         if has_blocking(warnings):
             raise ConflictError("; ".join(w["message"] for w in warnings if w["severity"] == "blocking"))

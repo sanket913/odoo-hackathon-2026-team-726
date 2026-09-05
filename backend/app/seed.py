@@ -89,7 +89,7 @@ def seed_salary_structure(db):
 
     rules = [
         SalaryRule(structure_id=structure.id, name="Basic Salary", code="BASIC", category=RuleCategory.BASIC,
-                   sequence=10, computation_type=ComputationType.FIXED, fixed_amount=Decimal("0.00")),
+                   sequence=10, computation_type=ComputationType.FORMULA, formula_text="WAGE"),
         SalaryRule(structure_id=structure.id, name="House Rent Allowance", code="HRA", category=RuleCategory.ALLOWANCE,
                    sequence=20, computation_type=ComputationType.PERCENTAGE, percentage=Decimal("40.000"),
                    base_rule_code="BASIC"),
@@ -112,7 +112,7 @@ def seed_salary_structure(db):
     db.flush()
     db.add_all([
         SalaryRule(structure_id=contract_structure.id, name="Basic Salary", code="BASIC", category=RuleCategory.BASIC,
-                   sequence=10, computation_type=ComputationType.FIXED, fixed_amount=Decimal("0.00")),
+                   sequence=10, computation_type=ComputationType.FORMULA, formula_text="WAGE"),
         SalaryRule(structure_id=contract_structure.id, name="Gross Salary", code="GROSS", category=RuleCategory.GROSS,
                    sequence=20, computation_type=ComputationType.FORMULA, formula_text="BASIC"),
         SalaryRule(structure_id=contract_structure.id, name="Net Salary", code="NET", category=RuleCategory.NET,

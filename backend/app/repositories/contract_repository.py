@@ -18,7 +18,7 @@ def get_applicable_contract(db: Session, employee_id: int, period_start: datetim
                              period_end: datetime.date) -> Contract | None:
     """
     Resolve the single contract that applies to `employee_id` for the given
-    payroll/reporting period. Only ACTIVE contracts are eligible.
+    payroll/reporting period. Active contracts and dated expired contracts are eligible for their historical period.
 
     If more than one ACTIVE contract overlaps the same period, that is a
     data-integrity problem (overlapping active contracts should never be
@@ -29,7 +29,8 @@ def get_applicable_contract(db: Session, employee_id: int, period_start: datetim
         db.query(Contract)
         .filter(
             Contract.employee_id == employee_id,
-            Contract.status == ContractStatus.ACTIVE,
+            or_(Contract.status == ContractStatus.ACTIVE,
+                and_(Contract.status == ContractStatus.EXPIRED, Contract.end_date.is_not(None))),
             _overlaps(period_start, period_end),
         )
         .order_by(Contract.start_date.desc())
@@ -40,7 +41,7 @@ def get_applicable_contract(db: Session, employee_id: int, period_start: datetim
     if len(candidates) > 1:
         raise ConflictError(
             f"Data integrity error: employee {employee_id} has {len(candidates)} overlapping "
-            f"active contracts for period {period_start}..{period_end}",
+            f"eligible contracts for period {period_start}..{period_end}",
             code="CONTRACT_CONFLICT",
         )
     return candidates[0]

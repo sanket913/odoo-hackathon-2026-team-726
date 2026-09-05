@@ -93,6 +93,9 @@ def create_allocation(db: Session, payload) -> TimeOffAllocation:
     employee = db.get(Employee, payload.employee_id)
     if not employee:
         raise NotFoundError("Employee not found")
+    leave_type = db.get(TimeOffType, payload.time_off_type_id)
+    if not leave_type or not leave_type.active:
+        raise ValidationAppError("Select an active time off type")
     allocation = TimeOffAllocation(
         employee_id=payload.employee_id,
         time_off_type_id=payload.time_off_type_id,
@@ -181,15 +184,17 @@ def create_request(db: Session, payload) -> TimeOffRequest:
     if not employee:
         raise NotFoundError("Employee not found")
     time_off_type = db.get(TimeOffType, payload.time_off_type_id)
-    if not time_off_type:
-        raise NotFoundError("Time off type not found")
+    if not time_off_type or not time_off_type.active:
+        raise ValidationAppError("Select an active time off type")
+    if time_off_type.unit.value != "Days":
+        raise ValidationAppError("Requests currently support day-based leave types only")
     if payload.to_date < payload.from_date:
         raise ValidationAppError("to_date must be on or after from_date")
 
     duration = Decimal((payload.to_date - payload.from_date).days + 1)
 
     # Leave Balance Blocker; remaining = allocated - taken already persists.
-    if time_off_type.requires_allocation or not time_off_type.deduct_from_payroll:
+    if time_off_type.requires_allocation:
         allocation = db.query(TimeOffAllocation).filter(
             TimeOffAllocation.employee_id == payload.employee_id,
             TimeOffAllocation.time_off_type_id == payload.time_off_type_id,
@@ -215,6 +220,9 @@ def create_request(db: Session, payload) -> TimeOffRequest:
     )
     db.add(request)
     db.flush()
+
+    if not time_off_type.approval_required:
+        return approve_request(db, request.id, None, "Automatically approved by time off type policy")
 
     notify(
         db, employee.user_id, "Time off request submitted",
@@ -245,7 +253,7 @@ def approve_request(db: Session, request_id: int, actor_user_id: int | None, hr_
     before = to_request_dict(request)
 
     allocation = None
-    if time_off_type.requires_allocation or not time_off_type.deduct_from_payroll:
+    if time_off_type.requires_allocation:
         allocation = (
             db.query(TimeOffAllocation)
             .filter(
@@ -264,7 +272,7 @@ def approve_request(db: Session, request_id: int, actor_user_id: int | None, hr_
                 "No approved allocation covers this request's period; cannot approve.",
                 code="NO_VALID_ALLOCATION",
             )
-        if allocation.remaining < request.duration_days:
+        if allocation.remaining < request.duration_days and (not time_off_type.deduct_from_payroll or not time_off_type.allow_negative):
             raise ConflictError(
                 f"Insufficient balance: {allocation.remaining} remaining, {request.duration_days} requested.",
                 code="INSUFFICIENT_BALANCE",

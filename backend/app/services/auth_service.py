@@ -72,16 +72,27 @@ def user_to_dict(user: User) -> dict:
     }
 
 
-def create_user(db: Session, email: str, password: str, full_name: str, role_names: list[str]) -> User:
+def create_user(db: Session, email: str, password: str, full_name: str, role_names: list[str], employee_id: int | None = None) -> User:
     existing = db.query(User).filter(User.email == email.lower()).first()
     if existing:
         raise ValidationAppError("A user with this email already exists", fields={"email": "already exists"})
     roles = db.query(Role).filter(Role.name.in_(role_names)).all()
     if role_names and len(roles) != len(set(role_names)):
         raise ValidationAppError("One or more role names are invalid")
+    employee = None
+    if employee_id is not None:
+        employee = db.query(Employee).filter(Employee.id == employee_id).with_for_update().first()
+        if not employee:
+            raise NotFoundError("Employee not found")
+        if employee.user_id:
+            raise ValidationAppError("This employee already has a user account")
     user = User(email=email.lower(), hashed_password=hash_password(password), full_name=full_name, roles=roles)
     db.add(user)
     db.flush()
+    if employee is not None:
+        employee.user_id = user.id
+        db.flush()
+        db.expire(user, ["employee"])
     return user
 
 

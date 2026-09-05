@@ -48,8 +48,8 @@ def get_current_user(token: str = Depends(get_token_from_header), db: Session = 
     user = db.get(User, user_id)
     if not user or not user.is_active:
         raise AuthError("User not found or inactive")
-    permissions = set(payload.get("perms") or [])
-    roles = payload.get("roles") or []
+    permissions = user.permission_codes()
+    roles = user.role_names()
     return CurrentUser(user=user, permissions=permissions, roles=roles)
 
 

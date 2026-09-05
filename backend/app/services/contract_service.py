@@ -34,6 +34,10 @@ def list_contracts(db: Session, employee_id: int | None, status: str | None, pag
     if search:
         like = f"%{search}%"
         query = query.filter(or_(Contract.reference.ilike(like), Contract.employee.has(Employee.name.ilike(like))))
+    if date_from:
+        query = query.filter(or_(Contract.end_date.is_(None), Contract.end_date >= date_from))
+    if date_to:
+        query = query.filter(Contract.start_date <= date_to)
     total = query.count()
     items = query.options(joinedload(Contract.employee), joinedload(Contract.salary_structure)).order_by(Contract.start_date.desc(), Contract.id.desc()).offset((page - 1) * limit).limit(limit).all()
     return items, total

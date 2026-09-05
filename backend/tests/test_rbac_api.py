@@ -89,3 +89,18 @@ def test_invalid_login_rejected(client, make_user):
 def test_unauthenticated_request_rejected(client):
     resp = client.get("/api/v1/employees")
     assert resp.status_code == 401
+
+def test_admin_cannot_change_own_roles(client, make_user):
+    user = make_user(['Admin'], email='self.roles.audit@example.com')
+    token = _login(client, user.email)
+    response = client.patch(f'/api/v1/users/{user.id}/roles', json={'role_names': ['Employee']}, headers={'Authorization': f'Bearer {token}'})
+    assert response.status_code == 403
+
+
+def test_existing_token_respects_revoked_roles(client, make_user, db, rbac):
+    user = make_user(['Admin'], email='revoked.roles.audit@example.com')
+    token = _login(client, user.email)
+    user.roles = [rbac['Employee']]
+    db.commit()
+    response = client.get('/api/v1/users', headers={'Authorization': f'Bearer {token}'})
+    assert response.status_code == 403

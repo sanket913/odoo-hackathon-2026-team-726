@@ -32,7 +32,8 @@ class UserCreateRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6)
     full_name: str
-    role_names: list[str] = Field(default_factory=list)
+    role_names: list[str] = Field(min_length=1)
+    employee_id: int | None = Field(default=None, gt=0)
 
 
 class UserUpdateRequest(BaseModel):
@@ -42,7 +43,7 @@ class UserUpdateRequest(BaseModel):
 
 
 class UserRolesUpdateRequest(BaseModel):
-    role_names: list[str]
+    role_names: list[str] = Field(min_length=1)
 
 
 class RoleOut(BaseModel):

@@ -8,6 +8,7 @@ def to_out_dict(schedule: WorkingSchedule) -> dict:
     return {
         "id": schedule.id,
         "name": schedule.name,
+        "company": "PeoplePay360",
         "type": schedule.type.value if hasattr(schedule.type, "value") else schedule.type,
         "weekly_hours": schedule.weekly_hours,
         "active": schedule.active,
@@ -26,9 +27,19 @@ def to_out_dict(schedule: WorkingSchedule) -> dict:
 
 
 def _validate_lines(lines_in: list) -> None:
+    if not lines_in:
+        raise ValidationAppError("Add at least one working interval")
+    seen = {}
     for line in lines_in:
         if line.end_time <= line.start_time:
             raise ValidationAppError("end_time must be after start_time for every schedule line")
+        duration = (line.end_time.hour * 60 + line.end_time.minute - line.start_time.hour * 60 - line.start_time.minute) / 60
+        if line.break_hours >= duration:
+            raise ValidationAppError("Break must be shorter than the working interval")
+        for previous in seen.get(line.day_of_week, []):
+            if line.start_time < previous.end_time and line.end_time > previous.start_time:
+                raise ValidationAppError("Schedule intervals cannot overlap on the same weekday")
+        seen.setdefault(line.day_of_week, []).append(line)
         if line.break_hours < 0:
             raise ValidationAppError("break_hours must be >= 0")
 

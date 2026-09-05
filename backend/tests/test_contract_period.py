@@ -68,3 +68,12 @@ def test_find_overlapping_active_contracts_detects_overlap(db):
 
     no_overlap = find_overlapping_active_contracts(db, emp.id, datetime.date(2026, 1, 1), None)
     assert len(no_overlap) == 0
+
+def test_expired_contract_is_available_for_historical_payroll(db):
+    emp = _make_employee(db, 'EMP-HIST-AUDIT')
+    old = Contract(employee_id=emp.id, reference='AUDIT-HIST', start_date=datetime.date(2025, 1, 1),
+        end_date=datetime.date(2025, 6, 30), wage=Decimal('30000'), status=ContractStatus.EXPIRED)
+    db.add(old)
+    db.flush()
+    assert get_applicable_contract(db, emp.id, datetime.date(2025, 5, 1), datetime.date(2025, 5, 31)).id == old.id
+    assert get_applicable_contract(db, emp.id, datetime.date(2026, 5, 1), datetime.date(2026, 5, 31)) is None

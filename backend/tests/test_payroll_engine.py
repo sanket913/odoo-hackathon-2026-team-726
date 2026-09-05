@@ -14,7 +14,7 @@ def _setup_structure(db, code="REG-TEST"):
     db.flush()
     rules = [
         SalaryRule(structure_id=structure.id, name="Basic", code="BASIC", category=RuleCategory.BASIC,
-                   sequence=10, computation_type=ComputationType.FIXED, fixed_amount=Decimal("0.00")),
+                   sequence=10, computation_type=ComputationType.FORMULA, formula_text="WAGE"),
         SalaryRule(structure_id=structure.id, name="HRA", code="HRA", category=RuleCategory.ALLOWANCE,
                    sequence=20, computation_type=ComputationType.PERCENTAGE, percentage=Decimal("40.000"), base_rule_code="BASIC"),
         SalaryRule(structure_id=structure.id, name="Conveyance", code="CONV", category=RuleCategory.ALLOWANCE,

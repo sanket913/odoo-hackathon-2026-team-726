@@ -21,6 +21,7 @@ from app.models.contract import Contract
 from app.models.salary import SalaryRule, ComputationType, RuleCategory
 from app.models.payroll import Payslip, PayslipLine, PayslipStatus
 from app.models.attendance import Attendance, AttendanceStatus
+from app.models.time_off import TimeOffRequest, RequestStatus
 from app.repositories.contract_repository import get_applicable_contract
 from app.engines.formula_engine import evaluate_formula, FormulaEvaluationError, FormulaSecurityError
 from app.engines.payroll_validation_engine import build_warnings, warning
@@ -84,6 +85,35 @@ def compute_payslip(db: Session, payslip: Payslip) -> Payslip:
     context: dict[str, Decimal] = {}
     wage = contract.wage if contract else Decimal("0.00")
     context["WAGE"] = wage
+    context["WORKED_DAYS"] = payslip.worked_days
+    context["PERIOD_DAYS"] = Decimal((payslip.period_end - payslip.period_start).days + 1)
+    attendance = db.query(Attendance).filter(Attendance.employee_id == employee.id,
+        Attendance.date >= payslip.period_start, Attendance.date <= payslip.period_end).all()
+    context["WORKED_HOURS"] = sum((row.worked_hours for row in attendance), Decimal("0"))
+    schedule = (contract.working_schedule if contract else None) or employee.working_schedule
+    expected_hours = Decimal("0")
+    expected_days = Decimal("0")
+    cursor = payslip.period_start
+    while cursor <= payslip.period_end:
+        hours = sum((line.duration_hours() for line in schedule.lines if line.day_of_week == cursor.weekday()), Decimal("0")) if schedule else Decimal("0")
+        expected_hours += hours
+        expected_days += Decimal(1) if hours > 0 else Decimal(0)
+        cursor += datetime.timedelta(days=1)
+    context["SCHEDULED_HOURS"] = expected_hours
+    context["SCHEDULED_DAYS"] = expected_days
+    context["OVERTIME_HOURS"] = sum((max(Decimal("0"), row.worked_hours - sum(
+        (line.duration_hours() for line in schedule.lines if line.day_of_week == row.date.weekday()), Decimal("0")))
+        for row in attendance), Decimal("0")) if schedule else Decimal("0")
+    unpaid_dates = set()
+    for leave in db.query(TimeOffRequest).filter(TimeOffRequest.employee_id == employee.id,
+        TimeOffRequest.status == RequestStatus.APPROVED, TimeOffRequest.from_date <= payslip.period_end,
+        TimeOffRequest.to_date >= payslip.period_start).all():
+        if leave.time_off_type.deduct_from_payroll:
+            cursor = max(leave.from_date, payslip.period_start)
+            while cursor <= min(leave.to_date, payslip.period_end):
+                unpaid_dates.add(cursor)
+                cursor += datetime.timedelta(days=1)
+    context["UNPAID_DAYS"] = Decimal(len(unpaid_dates))
 
     new_lines: list[PayslipLine] = []
     rule_warnings: list[dict] = []
@@ -116,10 +146,6 @@ def compute_payslip(db: Session, payslip: Payslip) -> Payslip:
         except (FormulaEvaluationError, FormulaSecurityError) as exc:
             rule_warnings.append(warning("FORMULA_ERROR", f"Rule {rule.code}: {exc}", "blocking"))
             amount = Decimal("0.00")
-
-        # A BASIC rule with no formula/fixed configuration defaults to the contract wage.
-        if rule.category == RuleCategory.BASIC and rule.computation_type == ComputationType.FIXED and rule.fixed_amount == 0 and wage:
-            amount = wage
 
         amount = _q(amount)
         context[rule.code] = amount

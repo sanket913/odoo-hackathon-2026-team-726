@@ -8,7 +8,7 @@ from app.schemas.auth import UserCreateRequest, UserUpdateRequest, UserRolesUpda
 from app.services import auth_service
 from app.models.auth import User, Role, Permission
 from app.core.security import hash_password
-from app.core.exceptions import NotFoundError
+from app.core.exceptions import NotFoundError, PermissionDeniedError
 from app.utils.response import ok, paginated
 
 router = APIRouter(tags=["users"])
@@ -26,7 +26,7 @@ def list_users(page: int = 1, limit: int = 20, db: Session = Depends(get_db),
 @router.post("/users")
 def create_user(payload: UserCreateRequest, db: Session = Depends(get_db),
                  _=Depends(require_permission(P_USER_MANAGE))):
-    user = auth_service.create_user(db, payload.email, payload.password, payload.full_name, payload.role_names)
+    user = auth_service.create_user(db, payload.email, payload.password, payload.full_name, payload.role_names, payload.employee_id)
     db.commit()
     return ok(auth_service.user_to_dict(user))
 
@@ -58,7 +58,9 @@ def update_user(user_id: int, payload: UserUpdateRequest, db: Session = Depends(
 
 @router.patch("/users/{user_id}/roles")
 def update_user_roles(user_id: int, payload: UserRolesUpdateRequest, db: Session = Depends(get_db),
-                       _=Depends(require_permission(P_ROLE_MANAGE))):
+                       current=Depends(require_permission(P_ROLE_MANAGE))):
+    if current.id == user_id:
+        raise PermissionDeniedError("You cannot change your own roles")
     user = auth_service.update_user_roles(db, user_id, payload.role_names)
     db.commit()
     return ok(auth_service.user_to_dict(user))

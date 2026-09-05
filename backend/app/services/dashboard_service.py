@@ -127,17 +127,21 @@ def get_payroll_dashboard(db: Session, period_start: datetime.date | None, perio
     manual_edits = len([a for a in attendance_rows if a.is_manual_correction])
 
     # ---- Time off overview ----
-    approved_days = db.query(func.coalesce(func.sum(TimeOffRequest.duration_days), 0)).filter(
+    leave_rows = db.query(TimeOffRequest).filter(
         TimeOffRequest.status == RequestStatus.APPROVED,
         TimeOffRequest.from_date <= period_end, TimeOffRequest.to_date >= period_start,
-        TimeOffRequest.employee_id.in_(employee_ids) if employee_ids else TimeOffRequest.id.is_(None),
-    ).scalar() or 0
+        TimeOffRequest.employee_id.in_(employee_ids),
+    ).all()
+    approved_days = sum((Decimal((min(r.to_date, period_end) - max(r.from_date, period_start)).days + 1)
+                         for r in leave_rows), Decimal("0"))
     pending_requests = db.query(TimeOffRequest).filter(
         TimeOffRequest.status == RequestStatus.TO_APPROVE,
+        TimeOffRequest.from_date <= period_end, TimeOffRequest.to_date >= period_start,
         TimeOffRequest.employee_id.in_(employee_ids) if employee_ids else TimeOffRequest.id.is_(None),
     ).count()
     allocations = db.query(TimeOffAllocation).filter(
         TimeOffAllocation.status == AllocationStatus.APPROVED,
+        TimeOffAllocation.valid_from <= period_end, TimeOffAllocation.valid_to >= period_start,
         TimeOffAllocation.employee_id.in_(employee_ids) if employee_ids else TimeOffAllocation.id.is_(None),
     ).all()
     leave_balance_total = sum((a.remaining for a in allocations), Decimal("0.00"))
@@ -174,6 +178,7 @@ def get_payroll_dashboard(db: Session, period_start: datetime.date | None, perio
             "salary_cost_by_department": salary_by_department,
             "monthly_net_salary_trend": monthly_trend,
         },
+        "payslip_status": {status.value: sum(1 for slip in payslips if slip.status == status) for status in PayslipStatus},
         "payroll_alerts": alerts[:50],
         "attendance_overview": {
             "by_status": status_counts,
