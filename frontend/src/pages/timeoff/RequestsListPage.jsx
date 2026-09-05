@@ -10,7 +10,7 @@ import { timeOffService } from '../../lib/api/services/timeOffService'
 import { queryKeys } from '../../lib/queryKeys'
 import { useAuth } from '../../lib/auth/AuthContext'
 
-import { Button, Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge, statusTone } from '../../components/ui'
+import { StatusBadge, Button, Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge } from '../../components/ui'
 
 export default function RequestsListPage() {
   const [dateFrom, setDateFrom] = useState('')
@@ -60,7 +60,7 @@ export default function RequestsListPage() {
                   <td className="font-medium text-foreground"><Link className="hover:text-primary" to={`/time-off/requests/${r.id}`}>{r.employee_name}</Link></td>
                   <td>{r.time_off_type_name}</td>
                   <td>{r.from_date}</td><td>{r.to_date}</td><td>{r.duration_days}</td>
-                  <td><Badge tone={statusTone(r.status)}>{r.status}</Badge></td>
+                  <td><StatusBadge status={r.status} /></td>
                   <td><RequestActions request={r} /></td>
                 </tr>
               ))}

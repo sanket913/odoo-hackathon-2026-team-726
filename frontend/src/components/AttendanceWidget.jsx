@@ -1,3 +1,4 @@
+import { AttendanceStatus } from './AttendanceStatus'
 import { AttendanceHoursSummary } from './AttendanceHoursSummary'
 import { useSelfAttendance } from '../lib/useSelfAttendance'
 import { useEffect, useState } from 'react'
@@ -33,8 +34,7 @@ export function AttendanceWidget() {
         <div className="flex flex-wrap items-center justify-between gap-2"><span>{record?.date || today}</span><Badge tone={checkedIn ? 'success' : 'muted'}>{checkedIn ? 'Checked in' : record?.check_out ? 'Checked out' : 'Not checked in'}</Badge></div>
         {checkedIn && <div><p className="o_label">Elapsed since check-in</p><p className="text-xl font-semibold tabular-nums">{elapsed}</p></div>}
         <AttendanceHoursSummary record={record} />
-        {record?.location_tag && <Badge>{record.location_tag}</Badge>}
-        {record?.auto_status_note && <p className="text-sm text-muted">{record.auto_status_note}</p>}
+        <AttendanceStatus record={record} />
         {!record?.check_in && <Button variant="outline" disabled={!canCheckIn} onClick={() => mutation.mutate('location')}>Check In with location</Button>}
         {!record?.check_out && <Button className="w-full" disabled={checkedIn ? !canCheckOut : !canCheckIn} onClick={() => mutation.mutate(checkedIn ? 'out' : 'in')}>{pending ? 'Saving…' : checkedIn ? 'Check Out' : 'Check In'}</Button>}
         <Link to="/attendance" className="block text-primary hover:underline" onClick={() => setOpen(false)}>View attendance records</Link>

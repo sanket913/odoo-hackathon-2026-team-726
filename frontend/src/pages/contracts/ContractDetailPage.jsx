@@ -8,7 +8,7 @@ import { contractService } from '../../lib/api/services/contractService'
 import { queryKeys } from '../../lib/queryKeys'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, CardBody, PageHeader, LoadingState, ErrorState, Badge, statusTone, StatusBar } from '../../components/ui'
+import { StatusBadge, Button, Card, CardBody, PageHeader, LoadingState, ErrorState, Badge, StatusBar } from '../../components/ui'
 
 export default function ContractDetailPage() {
   const { contractId } = useParams()
@@ -40,7 +40,7 @@ export default function ContractDetailPage() {
       <Card>
         <CardBody className="grid gap-3 sm:grid-cols-2">
           <Item label="Employee" value={<Link className="text-primary hover:underline" to={`/employees/${contract.employee_id}`}>{contract.employee_name}</Link>} />
-          <Item label="Status" value={<Badge tone={statusTone(contract.status)}>{contract.status}</Badge>} />
+          <Item label="Status" value={<StatusBadge status={contract.status} />} />
           <Item label="Department" value={departments.find(d => d.id === contract.department_id)?.name || '\u2014'} />
           <Item label="Job position" value={positions.find(p => p.id === contract.job_position_id)?.name || '\u2014'} />
           <Item label="Working schedule" value={schedule ? <Link className="text-primary hover:underline" to={`/schedules/${schedule.id}`}>{schedule.name}</Link> : contract.working_schedule_id ? `Schedule #${contract.working_schedule_id}` : '\u2014'} />

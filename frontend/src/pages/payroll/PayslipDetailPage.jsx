@@ -1,42 +1,20 @@
+import { PayslipDownload } from '../../components/PayslipDownload'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams, Link } from 'react-router-dom'
-import { toast } from 'sonner'
-import { Download, AlertTriangle } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { payrollService } from '../../lib/api/services/payrollService'
 import { queryKeys } from '../../lib/queryKeys'
-import { getErrorMessage } from '../../lib/api/normalizers'
-import { Button, Card, CardHeader, CardBody, PageHeader, LoadingState, ErrorState, Badge, statusTone, StatusBar } from '../../components/ui'
+import { StatusBadge, Button, Card, CardHeader, CardBody, PageHeader, LoadingState, ErrorState, Badge, StatusBar } from '../../components/ui'
 
 export default function PayslipDetailPage() {
   const { payslipId } = useParams()
   const { hasPermission } = useAuth()
-  const [downloading, setDownloading] = useState(false)
 
   const { data: payslip, isLoading, isError, refetch } = useQuery({
     queryKey: queryKeys.payslip(payslipId), queryFn: () => payrollService.getPayslip(payslipId),
   })
-
-  const handleDownload = async () => {
-    setDownloading(true)
-    try {
-      const blob = await payrollService.downloadPayslipPdf(payslipId)
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `payslip-${payslipId}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      window.URL.revokeObjectURL(url)
-    } catch (err) {
-      toast.error(getErrorMessage(err))
-    } finally {
-      setDownloading(false)
-    }
-  }
 
   if (isLoading) return <LoadingState />
   if (isError || !payslip) return <ErrorState onRetry={refetch} message="Could not load payslip." />
@@ -48,13 +26,12 @@ export default function PayslipDetailPage() {
         description={`${payslip.period_start} → ${payslip.period_end}`}
         actions={
           <>
-            <Badge tone={statusTone(payslip.status)}>{payslip.status}</Badge>
-            <Button onClick={handleDownload} disabled={downloading}>
-              <Download size={15} /> {downloading ? 'Preparing…' : 'Download PDF'}
-            </Button>
+            <StatusBadge status={payslip.status} />
+            <PayslipDownload payslip={payslip} />
           </>
         }
       />
+      {payslip.status !== 'Paid' && <p className="mb-4 text-sm text-muted">PDF download becomes available when this payslip is marked Paid.</p>}
       <StatusBar value={payslip.status} steps={['Draft', 'Computed', 'Validated', 'Paid']} />
 
       {(payslip.warning_messages || []).length > 0 && (

@@ -1,0 +1,64 @@
+/* Shared readable text sizes; display headings retain their own hierarchy. */
+.pp_auth .pp_auth_help, .pp_auth .pp_auth_footer, .pp_auth .pp_auth_story_footer, .pp_auth .pp_auth_demo > p { font-size: 12px; line-height: 1.6; }
+.pp_auth .pp_auth_intro, .pp_auth .pp_auth_features p, .pp_auth .pp_auth_form .o_label { font-size: 14px; }
+.pp_auth .pp_auth_demo_role { font-size: 12px; }
+.pp_auth .pp_auth_form .o_input { font-size: 16px; }
+.o_app .o_content { font-size: 14px; }
+.o_app .o_content .text-xs { font-size: 12px; line-height: 1.6; }
+.o_app .o_content .text-sm { font-size: 14px; line-height: 1.6; }
+.o_app .o_content .o_label { font-size: 13px; line-height: 1.5; }
+.o_app .o_content .o_input { font-size: 14px; min-height: 40px; }
+.o_app .o_content .o_button { font-size: 13px; min-height: 36px; }
+.o_app .o_content .o_button_sm { font-size: 12px; min-height: 32px; }
+.o_app .o_content .o_card_header { font-size: 14px; }
+.o_app .o_content table.pp-table th { font-size: 12px; line-height: 1.5; }
+.o_app .o_content table.pp-table td { font-size: 13px; line-height: 1.6; }
+.o_app .o_content .o_badge { font-size: 11px; line-height: 1.5; }
+.o_app .o_content .o_notebook button, .o_app .o_content .o_status_step { font-size: 12px; }
+.o_app .o_content .o_breadcrumbs { font-size: 12px; }
+.o_app .o_sidebar .o_nav_link { font-size: 13px; }
+.o_app .o_sidebar .o_nav_section { font-size: 10px; letter-spacing: .6px; }
+.o_app .pp-sidebar-heading span, .o_app .pp-nav-role { font-size: 11px; }
+.o_app .o_user_name, .o_app .pp-nav-module { font-size: 13px; }
+.o_app .pp-nav-eyebrow { font-size: 9px; }
+.o_app .pp-pagination-summary, .o_app .pp-history-footer { font-size: 13px; }
+.o_app .pp-status-note, .o_app .pp-status-tags .pp-status-context { font-size: 12px; }
+.o_app .pp-history-heading p, .o_app .pp-history-controls p, .o_app .pp-history-controls label { font-size: 13px; }
+.o_app .pp-history-controls select { font-size: 14px; }
+.o_app .pp-salary-heading p, .o_app .pp-salary-context, .o_app .pp-salary-breakdown-heading p, .o_app .pp-salary-department-name { font-size: 13px; }
+.o_app .pp-salary-departments strong { font-size: 14px; }
+.o_app .pp-salary-period, .o_app .pp-salary-live { font-size: 12px; }
+.o_app .pp-notification-title { font-size: 13px; }
+.o_app .pp-notification-header p, .o_app .pp-notification-toolbar { font-size: 12px; }
+.pp-public .pp-public-nav .pp-nav-links a, .pp-public .pp-nav-access > a:first-child, .pp-public .pp-nav-access .pp-cta { font-size: 13px; }
+.pp-public .pp-nav-links { gap: 2px; }
+.pp-public .pp-nav-links a { padding-inline: 8px; }
+.pp-public .pp-connection-label { font-size: 13px; color: #786a82; }
+.pp-public .pp-connection > div { font-size: 14px; }
+.pp-public .pp-hero-note { font-size: 13px; }
+.pp-public .pp-eyebrow { font-size: 11px; }
+.pp-public .pp-module-showcase .pp-module > span:last-of-type { font-size: 14px; }
+.pp-public .pp-story-index { font-size: 11px; }
+.pp-public .pp-story > p, .pp-public .pp-story ul, .pp-public .pp-story > a { font-size: 14px; line-height: 1.7; }
+.pp-public .pp-why-showcase .pp-values p { font-size: 14px; }
+.pp-public .pp-why-link { font-size: 14px; }
+.pp-public .pp-workflow-showcase li strong { font-size: 14px; }
+.pp-public .pp-workflow-showcase .pp-flow-description { font-size: 12px; max-width: 145px; }
+.pp-public .pp-workflow-showcase li .pp-flow-number { font-size: 11px; }
+.pp-public .pp-footer-brand > p, .pp-public .pp-footer-navigation a { font-size: 14px; }
+.pp-public .pp-footer-brand > span, .pp-public .pp-footer-navigation p, .pp-public .pp-copyright, .pp-public .pp-footer-bottom > span, .pp-public .pp-footer-bottom > a { font-size: 12px; }
+.pp-public .pp-footer-navigation h2 { font-size: 11px; }
+@media (max-width: 1150px) and (min-width: 1025px) {
+  .pp-public .pp-public-nav > .pp-brand .pp-brand-logo { width: 135px; }
+  .pp-public .pp-public-nav .pp-nav-links a { font-size: 12px; padding-inline: 5px; }
+  .pp-public .pp-nav-access { gap: 10px; }
+  .pp-public .pp-nav-access .pp-cta { padding-inline: 10px; font-size: 12px; }
+}
+@media (max-width: 1024px) { .pp-public .pp-public-nav .pp-nav-links a { font-size: 14px; } }
+@media (max-width: 540px) {
+  .pp-public .pp-connection > div { font-size: 12px; }
+  .pp-public .pp-eyebrow { font-size: 10px; letter-spacing: .1em; }
+  .pp-public .pp-story-showcase .pp-story { padding: 23px; }
+  .pp-public .pp-final-cta > p { font-size: 14px; }
+  .pp-public .pp-why-showcase .pp-values h3 { font-size: 16px; }
+}

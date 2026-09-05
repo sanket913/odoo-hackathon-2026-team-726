@@ -8,7 +8,7 @@ import { employeeService } from '../../lib/api/services/employeeService'
 import { queryKeys } from '../../lib/queryKeys'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, CardHeader, CardBody, PageHeader, LoadingState, ErrorState, Badge, statusTone, SmartButton } from '../../components/ui'
+import { StatusBadge, Button, Card, CardHeader, CardBody, PageHeader, LoadingState, ErrorState, Badge, SmartButton } from '../../components/ui'
 
 export default function EmployeeDetailPage() {
   const { employeeId } = useParams()
@@ -113,7 +113,7 @@ function ContractsMini({ contracts }) {
               <td><Link className="hover:text-primary" to={`/contracts/${c.id}`}>{c.reference}</Link></td>
               <td>{c.start_date}</td><td>{c.end_date || 'Ongoing'}</td>
               <td>₹{Number(c.wage).toLocaleString()}</td>
-              <td><Badge tone={statusTone(c.status)}>{c.status}</Badge></td>
+              <td><StatusBadge status={c.status} /></td>
             </tr>
           ))}
         </tbody>
@@ -133,7 +133,7 @@ function TimeOffMini({ rows }) {
             <tr key={r.id}>
               <td><Link className="hover:text-primary" to={`/time-off/requests/${r.id}`}>{r.time_off_type_name}</Link></td>
               <td>{r.from_date}</td><td>{r.to_date}</td><td>{r.duration_days}</td>
-              <td><Badge tone={statusTone(r.status)}>{r.status}</Badge></td>
+              <td><StatusBadge status={r.status} /></td>
             </tr>
           ))}
         </tbody>
@@ -152,7 +152,7 @@ function AllocationsMini({ rows }) {
           {rows.map((a) => (
             <tr key={a.id}>
               <td>{a.time_off_type_name}</td><td>{a.allocated}</td><td>{a.taken}</td><td>{a.remaining}</td>
-              <td><Badge tone={statusTone(a.status)}>{a.status}</Badge></td>
+              <td><StatusBadge status={a.status} /></td>
             </tr>
           ))}
         </tbody>

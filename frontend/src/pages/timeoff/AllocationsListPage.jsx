@@ -1,3 +1,4 @@
+import { StatusBadge } from '../../components/ui'
 import { FilterField } from '../../components/FilterToolbar'
 import { DateRangeFilter } from '../../components/DateRangeFilter'
 import { useState } from 'react'
@@ -9,7 +10,7 @@ import { timeOffService } from '../../lib/api/services/timeOffService'
 import { queryKeys } from '../../lib/queryKeys'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Select, Button, PageHeader, LoadingState, EmptyState, ErrorState, Badge, statusTone } from '../../components/ui'
+import { Select, Button, PageHeader, LoadingState, EmptyState, ErrorState, Badge } from '../../components/ui'
 
 export default function AllocationsListPage() {
   const [dateFrom, setDateFrom] = useState('')
@@ -58,7 +59,7 @@ export default function AllocationsListPage() {
                   <td>{a.time_off_type_name}</td>
                   <td>{a.allocated}</td><td>{a.taken}</td><td>{a.remaining}</td>
                   <td>{a.valid_from} → {a.valid_to}</td>
-                  <td><Badge tone={statusTone(a.status)}>{a.status}</Badge></td>
+                  <td><StatusBadge status={a.status} /></td>
                 </tr>
               ))}
             </tbody>

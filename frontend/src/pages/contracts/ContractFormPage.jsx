@@ -64,6 +64,7 @@ export default function ContractFormPage() {
         salary_structure_id: numOrNull(values.salary_structure_id),
         working_schedule_id: numOrNull(values.working_schedule_id),
       }
+      delete payload.reference
       if (isEdit) delete payload.employee_id
       return isEdit ? contractService.update(contractId, payload) : contractService.create(payload)
     },
@@ -89,8 +90,8 @@ export default function ContractFormPage() {
                 {(employeesPage?.items || []).map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}
               </Select>
             </Field>
-            <Field label="Reference" required error={errors.reference?.message}>
-              <Input {...register('reference')} placeholder="CTR-2026-001" />
+            <Field label="Reference">
+              <Input value={isEdit ? contract?.reference || '' : 'Assigned automatically when saved'} readOnly />
             </Field>
             <Field label="Start date" required error={errors.start_date?.message}>
               <Input type="date" {...register('start_date')} />

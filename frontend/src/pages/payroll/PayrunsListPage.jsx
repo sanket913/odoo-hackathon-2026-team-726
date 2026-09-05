@@ -9,7 +9,7 @@ import { payrollService } from '../../lib/api/services/payrollService'
 import { queryKeys } from '../../lib/queryKeys'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge, statusTone } from '../../components/ui'
+import { StatusBadge, Button, Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge } from '../../components/ui'
 
 export default function PayrunsListPage() {
   const [search, setSearchValue] = useState('')
@@ -66,7 +66,7 @@ export default function PayrunsListPage() {
                   <td>{p.period_start} → {p.period_end}</td>
                   <td>{p.total_employees}</td>
                   <td>₹{Number(p.total_net).toLocaleString()}</td>
-                  <td><Badge tone={statusTone(p.status)}>{p.status}</Badge></td>
+                  <td><StatusBadge status={p.status} /></td>
                 </tr>
               ))}
             </tbody>

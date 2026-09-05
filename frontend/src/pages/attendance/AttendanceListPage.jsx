@@ -1,3 +1,4 @@
+import { AttendanceStatus } from '../../components/AttendanceStatus'
 import { ListPagination } from '../../components/ListSearch'
 import '../../styles/attendance.css'
 import { AttendanceHoursSummary } from '../../components/AttendanceHoursSummary'
@@ -15,7 +16,7 @@ import { queryKeys } from '../../lib/queryKeys'
 
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, Input, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge, statusTone } from '../../components/ui'
+import { StatusBadge, Button, Card, Input, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge } from '../../components/ui'
 
 export default function AttendanceListPage() {
   const { hasPermission, hasRole } = useAuth()
@@ -104,10 +105,7 @@ export default function AttendanceListPage() {
                   <td>{a.check_out ? new Date(a.check_out).toLocaleString() : '—'}</td>
                   <td>{a.worked_hours}</td>
                   <td>
-                    <Badge tone={statusTone(a.status)}>{a.status}</Badge>
-                    {a.location_tag && <Badge className="ml-1">{a.location_tag}</Badge>}
-                    {a.auto_status_note && <p className="mt-1 text-xs text-muted">{a.auto_status_note}</p>}
-                    {a.is_manual_correction && <Badge tone="info" className="ml-1">Corrected</Badge>}
+                    <AttendanceStatus record={a} />
                   </td>
                   <td>
                     {canCorrect && <Link className="text-xs text-primary hover:underline" to={`/attendance/${a.id}/edit`}>Correct</Link>}

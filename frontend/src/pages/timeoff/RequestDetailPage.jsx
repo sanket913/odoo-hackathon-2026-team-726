@@ -9,7 +9,7 @@ import { invalidateAfter } from '../../lib/invalidation'
 import { getErrorMessage } from '../../lib/api/normalizers'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, CardBody, Textarea, PageHeader, LoadingState, ErrorState, Badge, statusTone, StatusBar } from '../../components/ui'
+import { StatusBadge, Button, Card, CardBody, Textarea, PageHeader, LoadingState, ErrorState, Badge, StatusBar } from '../../components/ui'
 
 export default function RequestDetailPage() {
   const { requestId } = useParams()
@@ -39,7 +39,7 @@ export default function RequestDetailPage() {
 
   return (
     <div className="o_form_view mx-auto max-w-xl">
-      <PageHeader title={`${request.time_off_type_name} — ${request.employee_name}`} actions={<Badge tone={statusTone(request.status)}>{request.status}</Badge>} />
+      <PageHeader title={`${request.time_off_type_name} — ${request.employee_name}`} actions={<StatusBadge status={request.status} />} />
       <StatusBar value={request.status} steps={['To Approve', request.status === 'Refused' ? 'Refused' : 'Approved']} />
       <Card>
         <CardBody className="space-y-3">

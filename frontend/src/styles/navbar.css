@@ -1,0 +1,62 @@
+.o_app .o_topbar { height: 72px; gap: 24px; padding: 0 24px; background: linear-gradient(110deg, #fff 60%, #faf6fd); color: #393046; border-bottom: 1px solid #e9e1ef; box-shadow: 0 4px 20px #3b254708; }
+.o_app .o_topbar::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 220px; height: 2px; background: linear-gradient(90deg, #704883, #bca0ce); }
+.o_topbar .o_brand { padding: 10px 14px; border-radius: 13px; background: linear-gradient(120deg, #654278, #3f2b4c); border: 1px solid #ffffff16; box-shadow: 0 4px 10px #59366712; flex-shrink: 0; }
+.o_topbar .o_brand .pp-brand-logo { width: 168px; }
+.o_app .pp-nav-context { display: flex; align-items: center; gap: 10px; border: 0; padding: 0; margin: 0; }
+.pp-nav-context-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: #f1eaf6; color: #866496; }
+.pp-nav-eyebrow { display: block; font-size: 8px; letter-spacing: 1.6px; color: #86768f; line-height: 1.6; }
+.pp-nav-module { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; color: #45334e; }
+.pp-nav-module svg { color: #b09bbc; }
+.o_app .o_topbar_actions { gap: 10px; }
+.o_app .o_topbar_button { justify-content: center; min-width: 38px; min-height: 38px; padding: 8px; color: #6c547b; border-radius: 11px; border: 1px solid #eae2ef; background: #fff; transition: background-color .15s, box-shadow .15s; }
+.o_app .o_topbar_button:hover { background: #f3edf7; box-shadow: 0 3px 8px #5536640b; }
+.o_topbar_button:focus-visible, .o_topbar .o_brand:focus-visible { outline: 2px solid #9a77ad; outline-offset: 3px; }
+.pp-nav-account { display: flex; align-items: center; gap: 10px; padding-left: 16px; margin-left: 5px; border-left: 1px solid #e8dfee; }
+.o_app .o_user_avatar { height: 38px; width: 38px; border-radius: 12px; background: linear-gradient(135deg, #e9dbf3, #f5edf9); color: #78518b; font-size: 12px; font-weight: 650; border: 1px solid #dfcfea; }
+.pp-nav-identity { display: flex; flex-direction: column; gap: 3px; }
+.o_app .o_user_name { font-size: 12px; color: #43324e; font-weight: 600; }
+.pp-nav-role { max-width: 180px; color: #897692; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.o_app .pp-nav-logout { margin-left: 4px; border-color: transparent; background: transparent; }
+.o_app .o_notification_count { top: -5px; right: -4px; min-width: 17px; min-height: 17px; display: grid; place-items: center; border: 2px solid #fff; font-size: 9px; }
+.o_app .o_sidebar { top: 72px; }
+.o_app .o_sidebar_backdrop { top: 72px; }
+.o_topbar .o_notifications { top: 48px; }
+@media (max-width: 1000px) { .o_app .o_topbar { gap: 14px; padding: 0 16px; } .o_app .pp-nav-context { display: none; } }
+@media (max-width: 700px) { .o_app .o_topbar { height: 64px; gap: 8px; padding: 0 10px; } .o_app .o_sidebar, .o_app .o_sidebar_backdrop { top: 64px; } .pp-nav-identity { display: none; } .o_topbar .o_brand { padding: 9px; border-radius: 10px; } .o_topbar .o_brand .pp-brand-logo { width: 132px; } .o_app .o_topbar_actions { gap: 6px; } .pp-nav-account { display: none; } .o_app .o_topbar_button { min-width: 34px; min-height: 36px; padding: 7px; } .o_app .pp-nav-logout { margin-left: 0; } .o_topbar .o_notifications, .o_topbar .pp-notifications { position: fixed; top: 72px; right: 12px; left: auto; } }
+@media (max-width: 370px) { .o_topbar .o_brand .pp-brand-logo { width: 112px; } .o_app .o_topbar { gap: 5px; padding: 0 6px; } .o_app .o_topbar_actions { gap: 4px; } }
+@media (prefers-reduced-motion: reduce) { .o_app .o_topbar_button { transition: none; } }
+@media print { .o_app .o_topbar { display: none; } }
+
+/* Dark navigation treatment. */
+.o_app .o_topbar { height: 70px; background: radial-gradient(ellipse at 35% 0, #67477b 0, transparent 65%), linear-gradient(100deg, #30213d, #241c31); color: #fff; border-bottom: 1px solid #9473aa55; box-shadow: 0 5px 20px #281b361a; }
+.o_app .o_topbar::after { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #c3a3de99, transparent); }
+.o_topbar .o_brand { padding: 0 24px 0 0; border: 0; border-right: 1px solid #ffffff26; border-radius: 0; background: transparent; box-shadow: none; }
+.o_topbar .o_brand .pp-brand-logo { width: 192px; }
+.o_app .pp-nav-context { gap: 10px; }
+.pp-nav-context-icon { width: 32px; height: 32px; background: #ffffff0c; border: 1px solid #ffffff18; color: #d1b9e2; border-radius: 9px; }
+.pp-nav-eyebrow { color: #c4afcf; font-size: 8px; letter-spacing: 1.5px; }
+.pp-nav-module { color: #fff; font-size: 13px; }
+.pp-nav-module svg { display: none; }
+.o_app .o_topbar_button { color: #eee4f5; background: #ffffff08; border: 1px solid #ffffff20; border-radius: 10px; width: 39px; height: 39px; }
+.o_app .o_topbar_button:hover { background: #ffffff19; border-color: #ffffff50; box-shadow: 0 0 14px #b588d118; }
+.pp-nav-account { border-color: #ffffff24; padding-left: 20px; margin-left: 8px; gap: 11px; }
+.o_app .o_user_avatar { background: linear-gradient(140deg, #c3a0dc, #89699f); border: 1px solid #dec5ef66; color: #fff; border-radius: 50%; width: 37px; height: 37px; box-shadow: 0 0 0 3px #ffffff08; }
+.o_app .o_user_name { color: #fff; font-weight: 550; }
+.pp-nav-role { color: #c7b6d1; }
+.o_app .pp-nav-logout { margin-left: 12px; width: auto; padding: 8px 12px; background: transparent; border-color: #ffffff26; }
+.o_app .o_notification_count { border-color: #32223e; background: #e76475; }
+.o_app .o_sidebar, .o_app .o_sidebar_backdrop { top: 70px; }
+@media (max-width: 1000px) { .o_topbar .o_brand { border: 0; padding: 0; } }
+@media (max-width: 700px) {
+ .o_app .o_topbar { height: 64px; padding: 0 12px; gap: 10px; }
+ .o_topbar .o_brand .pp-brand-logo { width: 142px; }
+ .o_app .o_topbar_button { width: 34px; height: 36px; min-width: 34px; padding: 6px; }
+ .o_app .o_topbar_actions { gap: 6px; }
+ .o_app .pp-nav-logout { margin-left: 0; width: 34px; padding: 6px; border-color: transparent; }
+ .o_app .o_sidebar, .o_app .o_sidebar_backdrop { top: 64px; }
+}
+@media (max-width: 370px) {
+ .o_app .o_topbar { padding: 0 8px; gap: 7px; }
+ .o_topbar .o_brand .pp-brand-logo { width: 130px; }
+ .o_app .o_topbar_actions { gap: 4px; }
+}

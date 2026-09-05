@@ -10,6 +10,10 @@ import './styles/odoo-theme.css'
 import './styles/workspace.css'
 import './styles/filters.css'
 import './styles/workspace-alignment.css'
+import './styles/status.css'
+import './styles/navbar.css'
+import './styles/sidebar.css'
+import './styles/readability.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {

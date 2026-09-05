@@ -1,3 +1,5 @@
+import { PayslipDownload } from '../../components/PayslipDownload'
+import { StatusBadge } from '../../components/ui'
 import { FilterField } from '../../components/FilterToolbar'
 import { DateRangeFilter } from '../../components/DateRangeFilter'
 import { ListSearch, ListPagination } from '../../components/ListSearch'
@@ -6,7 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useSearchParams } from 'react-router-dom'
 import { payrollService } from '../../lib/api/services/payrollService'
 import { queryKeys } from '../../lib/queryKeys'
-import { Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge, statusTone } from '../../components/ui'
+import { Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge } from '../../components/ui'
 
 export default function PayslipsListPage() {
   const [search, setSearchValue] = useState('')
@@ -48,7 +50,7 @@ export default function PayslipsListPage() {
       {!isLoading && !isError && filtered.length > 0 && (
         <div className="o_list_view table-wrap">
           <table className="o_list_table pp-table">
-            <thead><tr><th>Employee</th><th>Warnings</th><th>Period</th><th>Basic</th><th>Gross</th><th>Net</th><th>Status</th></tr></thead>
+            <thead><tr><th>Employee</th><th>Warnings</th><th>Period</th><th>Basic</th><th>Gross</th><th>Net</th><th>Status</th><th>PDF</th></tr></thead>
             <tbody>
               {filtered.map((p) => (
                 <tr key={p.id}>
@@ -58,7 +60,8 @@ export default function PayslipsListPage() {
                   <td>₹{Number(p.basic_amount).toLocaleString()}</td>
                   <td>₹{Number(p.gross_amount).toLocaleString()}</td>
                   <td className="font-medium text-foreground">₹{Number(p.net_amount).toLocaleString()}</td>
-                  <td><Badge tone={statusTone(p.status)}>{p.status}</Badge></td>
+                  <td><StatusBadge status={p.status} /></td>
+                  <td>{p.status === 'Paid' ? <PayslipDownload payslip={p} /> : <span className="text-xs text-muted">Available after payment</span>}</td>
                 </tr>
               ))}
             </tbody>

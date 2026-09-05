@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { Users, FileText, Clock, CalendarDays, Wallet, LayoutDashboard, Settings, ClipboardList, BarChart3 } from 'lucide-react'
+import { Users, FileText, Clock, CalendarDays, Wallet, LayoutDashboard, Settings, ClipboardList, BarChart3, ChevronRight, Layers3 } from 'lucide-react'
 import { useAuth } from '../lib/auth/AuthContext'
 import { PERMISSIONS } from '../lib/permissions/permissions'
 import { OdooTopBar } from './OdooTopBar'
@@ -42,12 +42,13 @@ export function Layout() {
     return () => document.removeEventListener('keydown', onKey)
   }, [mobileOpen])
   const context = pathname.startsWith('/payroll') ? 'Payroll' : pathname.startsWith('/time-off') ? 'Time Off' : pathname.startsWith('/admin') ? 'Administration' : pathname.startsWith('/schedules') ? 'Working Schedules' : pathname.split('/')[1]?.replace(/^./, c => c.toUpperCase())
-  const renderLink = (item, Icon = item.icon || FileText) => <NavLink key={item.to} to={item.to} onClick={() => setMobileOpen(false)} className={({ isActive }) => `o_nav_link${isActive ? ' active' : ''}`}><Icon size={16} />{item.label}</NavLink>
+  const renderLink = (item, Icon = item.icon || FileText) => <NavLink key={item.to} to={item.to} onClick={() => setMobileOpen(false)} className={({ isActive }) => `o_nav_link${isActive ? ' active' : ''}`}><span className="pp-sidebar-icon"><Icon size={16} aria-hidden="true" /></span><span className="pp-sidebar-label">{item.label}</span><ChevronRight size={12} className="pp-sidebar-arrow" aria-hidden="true" /></NavLink>
   return <div className="o_app min-h-screen bg-background">
     <a href="#main-content" className="o_skip_link">Skip to content</a>
     <OdooTopBar user={user} context={context} mobileOpen={mobileOpen} onToggleMenu={() => setMobileOpen(v => !v)} notifOpen={notifOpen} onToggleNotifications={() => setNotifOpen(v => !v)} onLogout={handleLogout} />
     {mobileOpen && <button type="button" tabIndex={-1} className="o_sidebar_backdrop" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
     <aside id="app-navigation" className={`o_sidebar${mobileOpen ? ' is_open' : ''}`}>
+      <div className="pp-sidebar-heading"><Layers3 size={19} aria-hidden="true" /><div><strong>Workspace</strong><span>People, connected.</span></div></div>
       <nav aria-label="Main navigation">
         {canSeeDashboard && renderLink({ to: '/payroll/dashboard', label: 'Dashboard' }, LayoutDashboard)}
         <p className="o_nav_section">People</p>

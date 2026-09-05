@@ -1,0 +1,10 @@
+.o_content .o_badge, .o_attendance_widget .o_badge { display: inline-flex; align-items: center; justify-content: center; gap: 5px; vertical-align: middle; line-height: 1.35; }
+.o_content .pp-status-badge { padding: 5px 9px; min-height: 26px; font-weight: 600; letter-spacing: .1px; white-space: nowrap; }
+.pp-status-dot { height: 5px; width: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.pp-status-detail { display: grid; gap: 8px; min-width: 160px; max-width: 320px; text-align: left; }
+.pp-status-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pp-status-tags .o_badge { margin: 0; min-height: 26px; }
+.pp-status-tags .pp-status-context { font-weight: 500; font-size: 10px; white-space: nowrap; }
+.pp-status-note { display: flex; align-items: flex-start; gap: 6px; padding: 7px 9px; border-radius: 7px; background: #f7f7fa; border: 1px solid #ecebf0; color: #657084; font-size: 11px; font-weight: 400; line-height: 1.5; white-space: normal; margin: 0; }
+.pp-status-note svg { flex-shrink: 0; margin-top: 2px; color: #81869a; }
+.pp-status-note span { min-width: 0; overflow-wrap: anywhere; }

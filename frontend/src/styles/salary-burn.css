@@ -1,0 +1,30 @@
+.pp-salary-overview { margin-bottom: 24px; border: 1px solid #e7dfed; border-radius: 18px; background: #fff; box-shadow: 0 8px 28px #39244706; overflow: hidden; }
+.pp-salary-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 24px; border-bottom: 1px solid #eee8f2; }
+.pp-salary-heading > div { display: flex; align-items: center; gap: 12px; }
+.pp-salary-heading-icon { display: grid; place-items: center; height: 42px; width: 42px; flex-shrink: 0; background: #f3edf8; color: #78518b; border-radius: 13px; }
+.pp-salary-heading h2 { margin: 0; font-size: 15px; font-weight: 650; color: #30283c; }
+.pp-salary-heading p, .pp-salary-breakdown-heading p { font-size: 12px; color: #727486; margin: 5px 0 0; }
+.pp-salary-live { display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; color: #297365; background: #eff8f4; border: 1px solid #d8eee3; padding: 7px 11px; border-radius: 20px; font-size: 11px; }
+.pp-salary-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pp-salary-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.4fr); gap: 26px; padding: 24px; align-items: stretch; }
+.pp-salary-total { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 28px; border-radius: 15px; color: #fff; background: radial-gradient(ellipse at 0 100%, #755483, transparent 80%), #352440; }
+.pp-salary-total-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #ded0e7; font-size: 10px; letter-spacing: 1.6px; }
+.pp-salary-amount { margin: 22px 0 14px; font-size: clamp(24px, 2.4vw, 38px); line-height: 1.25; font-weight: 650; letter-spacing: -1px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.pp-salary-context { font-size: 12px; color: #e1d5e8; line-height: 1.8; max-width: 320px; }
+.pp-salary-footnote { display: flex; align-items: center; gap: 10px; padding-top: 23px; margin-top: 28px; border-top: 1px solid #ffffff26; font-size: 12px; color: #e1d5e8; }
+.pp-salary-footnote strong { color: white; font-size: 18px; margin-right: 4px; }
+.pp-salary-period { margin-top: 12px; font-size: 10px; color: #d1c0dd; }
+.pp-salary-breakdown { min-width: 0; }
+.pp-salary-breakdown-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 17px; color: #78518b; }
+.pp-salary-breakdown-heading h3 { margin: 0; font-size: 14px; font-weight: 600; color: #30283c; }
+.pp-salary-departments { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.pp-salary-departments li { min-width: 0; padding: 13px 15px; background: #fcfbfd; border: 1px solid #eee8f2; border-radius: 11px; }
+.pp-salary-department-name { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; font-size: 11px; color: #656477; }
+.pp-salary-share { flex-shrink: 0; color: #595267; font-variant-numeric: tabular-nums; }
+.pp-salary-departments strong { font-size: 13px; font-weight: 600; color: #30283c; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.pp-salary-bar { height: 4px; margin-top: 11px; border-radius: 8px; background: #ebe7ef; overflow: hidden; }
+.pp-salary-bar span { display: block; height: 100%; border-radius: inherit; background: var(--department-color); }
+.pp-salary-empty { color: #727486; font-size: 13px; padding: 28px 0; }
+@media (max-width: 1000px) { .pp-salary-layout { grid-template-columns: minmax(0, 1fr); } .pp-salary-total { padding: 24px; } .pp-salary-footnote { margin-top: 16px; padding-top: 16px; } }
+@media (max-width: 550px) { .pp-salary-heading { padding: 18px; flex-wrap: wrap; } .pp-salary-heading h2 { font-size: 14px; } .pp-salary-layout { padding: 14px; gap: 22px; } .pp-salary-departments { grid-template-columns: minmax(0, 1fr); } .pp-salary-amount { font-size: 27px; } }
+@media print { .pp-salary-total { background: white; color: #30283c; border: 1px solid #ddd; } .pp-salary-total p, .pp-salary-total span, .pp-salary-total strong { color: #30283c; } }

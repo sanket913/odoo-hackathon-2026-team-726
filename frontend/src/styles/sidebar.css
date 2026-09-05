@@ -1,0 +1,21 @@
+.o_app .o_sidebar { display: flex; flex-direction: column; padding: 0 12px 20px; background: linear-gradient(170deg, #fbf8fd, #fff 65%); border-right: 1px solid #e7dfed; scrollbar-width: thin; scrollbar-color: #d9cbe2 transparent; }
+.pp-sidebar-heading { display: flex; align-items: center; gap: 11px; padding: 22px 10px 20px; margin-bottom: 10px; border-bottom: 1px solid #eae2f0; color: #846196; }
+.pp-sidebar-heading strong { display: block; font-size: 13px; font-weight: 650; color: #41304e; letter-spacing: -.2px; }
+.pp-sidebar-heading span { display: block; margin-top: 3px; color: #94839e; font-size: 10px; }
+.o_app .o_sidebar .o_nav_section { display: flex; align-items: center; gap: 8px; margin: 24px 10px 9px; font-size: 9px; font-weight: 650; letter-spacing: 1px; text-transform: uppercase; color: #8a7796; }
+.o_app .o_sidebar .o_nav_section::after { content: ''; flex: 1; min-width: 8px; height: 1px; background: #e9e1ef; }
+.o_app .o_sidebar .o_nav_link { display: flex; gap: 9px; min-height: 43px; padding: 6px 8px; margin: 4px 0; border: 1px solid transparent; border-radius: 11px; font-size: 11px; font-weight: 500; color: #61516e; transition: background-color .15s, border-color .15s; }
+.pp-sidebar-icon { display: grid; place-items: center; width: 29px; height: 29px; flex-shrink: 0; background: #f2edf6; border: 1px solid #eee6f3; border-radius: 8px; }
+.o_app .o_sidebar .o_nav_link svg { color: #8c729d; }
+.pp-sidebar-label { flex: 1; min-width: 0; line-height: 1.4; }
+.o_app .o_sidebar .pp-sidebar-arrow { opacity: 0; }
+.o_app .o_sidebar .o_nav_link:hover { background: #f1eaf7; border-color: #e8ddee; color: #51365f; }
+.o_app .o_sidebar .o_nav_link:hover .pp-sidebar-arrow { opacity: .6; }
+.o_app .o_sidebar .o_nav_link.active { background: linear-gradient(110deg, #755286, #4c335e); border-color: #674978; color: white; font-weight: 600; box-shadow: 0 4px 10px #5632651c; }
+.o_app .o_sidebar .o_nav_link.active .pp-sidebar-icon { background: #ffffff14; border-color: #ffffff1c; }
+.o_app .o_sidebar .o_nav_link.active svg { color: #f3e8fb; }
+.o_app .o_sidebar .o_nav_link.active .pp-sidebar-arrow { opacity: 1; }
+.o_app .o_sidebar .o_nav_link:focus-visible { outline: 2px solid #9470a8; outline-offset: 2px; }
+@media (max-width: 900px) { .o_app .o_sidebar.is_open { box-shadow: 12px 0 35px #30203d25; } }
+@media (prefers-reduced-motion: reduce) { .o_app .o_sidebar .o_nav_link { transition: none; } }
+@media print { .o_app .o_sidebar { display: none; } }

@@ -8,7 +8,7 @@ import { invalidateAfter } from '../../lib/invalidation'
 import { getErrorMessage } from '../../lib/api/normalizers'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, CardBody, PageHeader, LoadingState, ErrorState, Badge, statusTone, StatusBar } from '../../components/ui'
+import { StatusBadge, Button, Card, CardBody, PageHeader, LoadingState, ErrorState, Badge, StatusBar } from '../../components/ui'
 
 export default function AllocationDetailPage() {
   const { allocationId } = useParams()
@@ -37,7 +37,7 @@ export default function AllocationDetailPage() {
 
   return (
     <div className="o_form_view mx-auto max-w-xl">
-      <PageHeader title={`${allocation.time_off_type_name} — ${allocation.employee_name}`} actions={<Badge tone={statusTone(allocation.status)}>{allocation.status}</Badge>} />
+      <PageHeader title={`${allocation.time_off_type_name} — ${allocation.employee_name}`} actions={<StatusBadge status={allocation.status} />} />
       <StatusBar value={allocation.status} steps={['Draft', allocation.status === 'Refused' ? 'Refused' : 'Approved']} />
       <Card>
         <CardBody className="space-y-3">

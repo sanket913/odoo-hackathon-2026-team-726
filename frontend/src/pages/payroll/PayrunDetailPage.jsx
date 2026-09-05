@@ -9,7 +9,7 @@ import { invalidateAfter } from '../../lib/invalidation'
 import { getErrorMessage } from '../../lib/api/normalizers'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, PageHeader, LoadingState, ErrorState, Badge, statusTone, StatusBar } from '../../components/ui'
+import { StatusBadge, Button, Card, PageHeader, LoadingState, ErrorState, Badge, StatusBar } from '../../components/ui'
 
 export default function PayrunDetailPage() {
   const { payrunId } = useParams()
@@ -62,7 +62,7 @@ export default function PayrunDetailPage() {
       <PageHeader
         title={payrun.name}
         description={`${payrun.period_start} → ${payrun.period_end} · ${payrun.salary_structure_name}`}
-        actions={<Badge tone={statusTone(payrun.status)}>{payrun.status}</Badge>}
+        actions={<StatusBadge status={payrun.status} />}
       />
       <StatusBar value={payrun.status} steps={['Draft', 'Computed', 'Validated', 'Paid']} />
 
@@ -118,7 +118,7 @@ export default function PayrunDetailPage() {
                 <td>₹{Number(p.basic_amount).toLocaleString()}</td>
                 <td>₹{Number(p.gross_amount).toLocaleString()}</td>
                 <td className="font-medium text-foreground">₹{Number(p.net_amount).toLocaleString()}</td>
-                <td><Badge tone={statusTone(p.status)}>{p.status}</Badge></td>
+                <td><StatusBadge status={p.status} /></td>
                 <td>
                   {(p.warning_messages || []).length > 0 && (
                     <span title={p.warning_messages.map((w) => w.message).join('\n')}>

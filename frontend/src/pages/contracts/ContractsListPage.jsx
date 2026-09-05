@@ -9,7 +9,7 @@ import { contractService } from '../../lib/api/services/contractService'
 import { queryKeys } from '../../lib/queryKeys'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge, statusTone } from '../../components/ui'
+import { StatusBadge, Button, Card, Select, PageHeader, LoadingState, EmptyState, ErrorState, Badge } from '../../components/ui'
 
 export default function ContractsListPage() {
   const [search, setSearchValue] = useState('')
@@ -80,7 +80,7 @@ export default function ContractsListPage() {
                   <td><span className={!c.end_date ? 'pp-contracts-ongoing' : ''}>{c.end_date || 'Ongoing'}</span></td>
                   <td className="pp-contracts-wage">₹{Number(c.wage).toLocaleString('en-IN')}</td>
                   <td>{c.salary_structure_name || '—'}</td>
-                  <td><Badge tone={statusTone(c.status)}>{c.status}</Badge></td>
+                  <td><StatusBadge status={c.status} /></td>
                 </tr>
               ))}
             </tbody>

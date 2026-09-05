@@ -1,3 +1,4 @@
+import { AttendanceStatus } from './AttendanceStatus'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
@@ -35,7 +36,7 @@ export function EmployeeAttendanceHistory({ employeeId }) {
       <table className="o_list_table pp-table"><thead><tr><th>Date</th><th>Check in</th><th>Check out</th><th>Net hours</th><th>Status</th></tr></thead><tbody>{rows.map(row => <tr key={row.id}>
         <td><Link to={`/attendance/${row.id}`} className="pp-history-date">{new Date(`${row.date}T00:00:00`).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })}</Link><small>{new Date(`${row.date}T00:00:00`).toLocaleDateString([], { weekday: 'long' })}</small></td>
         <td>{time(row.check_in)}</td><td>{row.check_in && !row.check_out ? <span className="text-primary">In progress</span> : time(row.check_out)}</td>
-        <td><strong>{row.check_out ? `${Number(row.worked_hours).toFixed(2)} h` : '--'}</strong></td><td><Badge tone={statusTone(row.status)}>{row.status}</Badge></td>
+        <td><strong>{row.check_out ? `${Number(row.worked_hours).toFixed(2)} h` : '--'}</strong></td><td><AttendanceStatus record={row} /></td>
       </tr>)}</tbody></table>
     </div>}
     {data && !isError && !isLoading && <footer className="pp-history-footer"><span>Showing {total ? (page - 1) * limit + 1 : 0} to {Math.min(page * limit, total)} of {total}</span><nav aria-label="Attendance pagination">

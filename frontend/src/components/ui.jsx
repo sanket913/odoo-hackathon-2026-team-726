@@ -18,6 +18,9 @@ export function CardBody({ className, ...props }) {
 export function Badge({ tone = 'default', className, children }) {
   return <span className={clsx('o_badge', `o_badge_${tone}`, className)}>{children}</span>
 }
+export function StatusBadge({ status }) {
+  return <Badge tone={statusTone(status)} className="pp-status-badge"><span className="pp-status-dot" aria-hidden="true" />{status}</Badge>
+}
 export function statusTone(status) {
   const map = {
     Active: 'success', Approved: 'success', Paid: 'success', Present: 'success', Computed: 'info',

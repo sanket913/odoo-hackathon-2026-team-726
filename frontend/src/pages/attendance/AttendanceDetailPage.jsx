@@ -1,3 +1,4 @@
+import { AttendanceStatus } from '../../components/AttendanceStatus'
 import { AttendanceHoursSummary } from '../../components/AttendanceHoursSummary'
 import { employeeService } from '../../lib/api/services/employeeService'
 import { useQuery } from '@tanstack/react-query'
@@ -7,7 +8,7 @@ import { attendanceService } from '../../lib/api/services/attendanceService'
 import { queryKeys } from '../../lib/queryKeys'
 import { useAuth } from '../../lib/auth/AuthContext'
 import { PERMISSIONS } from '../../lib/permissions/permissions'
-import { Button, Card, CardBody, PageHeader, LoadingState, ErrorState, Badge, statusTone } from '../../components/ui'
+import { StatusBadge, Button, Card, CardBody, PageHeader, LoadingState, ErrorState, Badge } from '../../components/ui'
 
 export default function AttendanceDetailPage() {
   const { attendanceId } = useParams()
@@ -40,9 +41,8 @@ export default function AttendanceDetailPage() {
           <Item label="Check in" value={record.check_in ? new Date(record.check_in).toLocaleString() : '—'} />
           <Item label="Check out" value={record.check_out ? new Date(record.check_out).toLocaleString() : '—'} />
           <Item label="Location" value={record.location_tag || "Not captured"} />
-          {record.auto_status_note && <Item label="Automatic status note" value={record.auto_status_note} />}
           <Item label="Net worked hours" value={record.worked_hours} />
-          <Item label="Status" value={<Badge tone={statusTone(record.status)}>{record.status}</Badge>} />
+          <Item label="Status" value={<AttendanceStatus record={record} />} />
           {record.is_manual_correction && <Item label="Correction reason" value={record.correction_reason || '—'} />}
         </CardBody>
       </Card>
@@ -54,7 +54,7 @@ function Item({ label, value }) {
   return (
     <div>
       <p className="text-xs text-muted">{label}</p>
-      <p className="mt-0.5 text-sm font-medium text-foreground">{value}</p>
+      <div className="mt-0.5 text-sm font-medium text-foreground">{value}</div>
     </div>
   )
 }
