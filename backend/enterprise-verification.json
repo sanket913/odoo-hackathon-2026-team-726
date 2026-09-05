@@ -1,0 +1,71 @@
+{
+  "demo_logins_verified": 8,
+  "employees": {
+    "total": 250,
+    "page_size": 20,
+    "seconds": 0.055
+  },
+  "contracts": {
+    "total": 295,
+    "page_size": 20,
+    "seconds": 0.021
+  },
+  "attendance": {
+    "total": 14817,
+    "page_size": 20,
+    "seconds": 0.041
+  },
+  "time-off/requests": {
+    "total": 420,
+    "page_size": 20,
+    "seconds": 0.037
+  },
+  "time-off/allocations": {
+    "total": 762,
+    "page_size": 20,
+    "seconds": 0.014
+  },
+  "payruns": {
+    "total": 13,
+    "page_size": 13,
+    "seconds": 0.034
+  },
+  "payslips": {
+    "total": 1501,
+    "page_size": 20,
+    "seconds": 0.073
+  },
+  "search_across_250": "passed",
+  "status_filters": "passed",
+  "dashboard": {
+    "total_net_salary_paid": 88078400.0,
+    "payslips_generated": 1500,
+    "average_salary": 88078.4,
+    "approved_time_off": 273,
+    "attendance_health_pct": 93.4,
+    "present_today": 0,
+    "late_today": 0,
+    "on_leave_today": 0
+  },
+  "counts": {
+    "users": 8,
+    "employees": 250,
+    "departments": 8,
+    "job_positions": 26,
+    "employee_types": 3,
+    "working_schedules": 5,
+    "contracts": 295,
+    "attendances": 14817,
+    "time_off_types": 4,
+    "time_off_allocations": 762,
+    "time_off_requests": 420,
+    "salary_structures": 2,
+    "salary_rules": 9,
+    "payruns": 13,
+    "payslips": 1501,
+    "payslip_lines": 8406,
+    "notifications": 150,
+    "audit_logs": 119
+  },
+  "original_password_hashes_preserved": 5
+}

@@ -1,0 +1,34 @@
+# --- Backend (Python) ---
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.db
+backend/*.sqlite3
+backend/.pytest_cache/
+backend/**/.pytest_cache/
+backend/.env
+frontend/.env
+frontend/ui-audit/
+*.pyc
+
+# --- Frontend (Node) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+*.log
+
+backend/.seed-backups/
+
+# Local credentials and generated runtime data
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
